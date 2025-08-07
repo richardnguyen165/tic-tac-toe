@@ -8,19 +8,19 @@ function Board(){
   for (let rowIndex = 0; rowIndex < rows; rowIndex++){
     board.push([]);
     for (let colIndex = 0; colIndex < columns; colIndex++){
-      board[rowIndex].push(cellValue);
+      board[rowIndex].push(Cell());
     }
   }
-
   const getBoard = () => board;
 
   const changeCell = (row, column, playerValue) => {
     // meaning the cell already has a x and o on it already
-    if (!board[row][column].getCellValue()){
-      return;
+    if (board[row][column].getCellValue() !== 0){
+      return false;
     }
 
     board[row][column].changeCellValue(playerValue);
+    return true;
   };
 
   // for console testing
@@ -63,7 +63,7 @@ function gameController(playerOneName = "Player One", playerTwoName = "Player Tw
   }
 
   const board = Board();
-  const activePlayer = playerDB.playerOne;
+  let activePlayer = playerDB.playerOne;
 
   const checkArrayForOneValue = (check) => {
     let firstValue = check[0].getCellValue();
@@ -73,7 +73,7 @@ function gameController(playerOneName = "Player One", playerTwoName = "Player Tw
   };
 
   const checkForWins = () => {
-    const boardReplica = board.getBoard;
+    const boardReplica = board.getBoard();
 
     // Check for row wins
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
@@ -109,16 +109,129 @@ function gameController(playerOneName = "Player One", playerTwoName = "Player Tw
 
   // The board will have an eventlistener for each button, allowing it to pass row and col params
   const actionOnBoard = (row, column) => {
-    board.changeCell(row, column, activePlayer.value);
-    const winCheck = checkForWins();
-    if (!winCheck){
-      swapActivePlayers();
+    let validMove = board.changeCell(row, column, activePlayer.value);
+    if (validMove){
+      const winCheck = checkForWins();
+      if (!winCheck){
+        swapActivePlayers();
+      }
+      board.printBoard();
+      // the value of winCheck will communicate to displayController()
+      return winCheck;
     }
-    // the value of winCheck will communicate to displayController()
-    return winCheck;
+    else{
+      console.log('Invalid move: chose occupied square')
+      return false;
+    }
   };
 
   return {actionOnBoard, getActivePlayer};
 }
 
+
+/* 
+test row win
+
+let game = gameController();
+
+let value = game.actionOnBoard(0, 0);
+console.log(value);
+
+value = game.actionOnBoard(1, 0);
+console.log(value);
+
+value = game.actionOnBoard(1, 1);
+console.log(value);
+
+value = game.actionOnBoard(2, 0);
+console.log(value);
+
+value = game.actionOnBoard(0, 2);
+console.log(value);
+
+*/
+
+
+
+/* 
+
+test col win and test occupied square check
+
+let game = gameController();
+
+let value = game.actionOnBoard(0, 0);
+console.log(value);
+
+value = game.actionOnBoard(0, 0);
+console.log(value);
+
+value = game.actionOnBoard(0, 1);
+console.log(value);
+
+value = game.actionOnBoard(1, 0);
+console.log(value);
+
+value = game.actionOnBoard(1, 1);
+console.log(value);
+
+value = game.actionOnBoard(2, 0);
+console.log(value);
+
+*/
+
+/*
+
+test diag win
+
+let game = gameController();
+
+let value = game.actionOnBoard(1, 0);
+console.log(value);
+
+value = game.actionOnBoard(1, 1);
+console.log(value);
+
+value = game.actionOnBoard(2, 0);
+console.log(value);
+
+value = game.actionOnBoard(2, 2);
+console.log(value);
+
+value = game.actionOnBoard(0, 2);
+console.log(value);
+
+value = game.actionOnBoard(0, 0);
+console.log(value);
+
+*/
+
+
+/* 
+
+test mid-game no win
+
+let game = gameController();
+
+let value = game.actionOnBoard(0, 0);
+console.log(value);
+
+value = game.actionOnBoard(0, 0);
+console.log(value);
+
+value = game.actionOnBoard(0, 1);
+console.log(value);
+
+value = game.actionOnBoard(1, 0);
+console.log(value);
+
+value = game.actionOnBoard(1, 1);
+console.log(value);
+
+value = game.actionOnBoard(2, 1);
+console.log(value);
+
+value = game.actionOnBoard(2, 0);
+console.log(value);
+
+*/
 
