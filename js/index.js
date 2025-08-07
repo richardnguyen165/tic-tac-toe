@@ -1,5 +1,3 @@
-const { accessedDynamicData } = require("next/dist/server/app-render/dynamic-rendering");
-
 function Board(){
   const rows = 3, columns = 3;
 
