@@ -1,0 +1,16 @@
+https://www.ayweb.dev/blog/building-a-house-from-the-inside-out
+"our application's user interface should be a visual representation of underlying application logic"
+"Instead, the DOM should be responsible for reading and displaying the application state to the user and providing an easy-to-use gateway to interact with the methods it needs to."
+
+"Build it in console first"
+
+Modules?
+
+Board() -> responsible for the board, state of the board, action that allow player to change the cell (console, phase 1)
+
+displayController() -> responsible for manipulating the DOM to show the game, and other elements (UI, phase 2)
+
+gameController() -> responsible for player interaction (console, phase 1)
+
+Cell() -> responsible for each cell of the board, changes depending on what player clicked (console, phase 1) 
+
