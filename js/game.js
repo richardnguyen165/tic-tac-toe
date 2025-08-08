@@ -42,10 +42,6 @@ function userInput(){
   connectInput();
 }
 
-/*
-board.html
-*/
-
 function Board(){
   const rows = 3, columns = 3;
 
@@ -263,7 +259,7 @@ function displayController(playerOneName = "Player One", playerTwoName = "Player
   //html linkers
 
   const game = gameController(playerOneName, playerTwoName);
-  
+
   const renderBoard = () => {
     const playerStatusRef = document.querySelector('.player-status');
     const boardRef = document.querySelector('.board');
