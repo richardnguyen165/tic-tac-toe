@@ -40,12 +40,22 @@ function Board(){
 
 function Cell(){
   let cellValue = 0;
+  let colorValue = '';
+  let cellSymbol = '';
 
-  const changeCellValue = (playerValue) => cellValue = playerValue;
+  const changeCellValue = (playerValue) => {
+    cellValue = playerValue;
+    colorValue = playerValue === 1 ? "blue" : "red";
+    cellSymbol = playerValue === 1 ? "X" : "O";
+  };
   
   const getCellValue = () => cellValue;
 
-  return {changeCellValue, getCellValue};
+  const getColorValue = () => colorValue;
+
+  const getCellSymbol = () => cellSymbol;
+
+  return {changeCellValue, getCellValue, getColorValue, getCellSymbol};
 }
 
 // default parameters for naming
@@ -53,12 +63,16 @@ function gameController(playerOneName = "Player One", playerTwoName = "Player Tw
 
   const playerDB = {
     playerOne : {
-      playerOneName,
-      value: 1
+      name: playerOneName,
+      value: 1,
+      symbol: "X",
+      color: "Blue"
     },
     playerTwo : {
-      playerTwoName,
-      value : 2
+      name: playerTwoName,
+      value : 2,
+      symbol: "O",
+      color: "Red"
     }
   }
 
@@ -101,6 +115,20 @@ function gameController(playerOneName = "Player One", playerTwoName = "Player Tw
     return checkArrayForOneValue([boardReplica[0][0], boardReplica[1][1], boardReplica[2][2]]) || checkArrayForOneValue([boardReplica[0][2], boardReplica[1][1], boardReplica[2][0]]);
   };
 
+  const checkIfFilled = () => {
+    const boardReplica = board.getBoard();
+
+    for (let rowIndex = 0; rowIndex < 3; rowIndex++){
+      for (let colIndex = 0; colIndex < 3; colIndex++){
+        console.log()
+        if (boardReplica[rowIndex][colIndex].getCellValue() === 0){
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   const swapActivePlayers = () => {
     activePlayer = activePlayer === playerDB.playerOne ? playerDB.playerTwo : playerDB.playerOne;
   }
@@ -109,129 +137,139 @@ function gameController(playerOneName = "Player One", playerTwoName = "Player Tw
 
   // The board will have an eventlistener for each button, allowing it to pass row and col params
   const actionOnBoard = (row, column) => {
+    // Prevents user from pressing after wins
     let validMove = board.changeCell(row, column, activePlayer.value);
     if (validMove){
-      const winCheck = checkForWins();
-      if (!winCheck){
-        swapActivePlayers();
-      }
+      swapActivePlayers();
       board.printBoard();
-      // the value of winCheck will communicate to displayController()
-      return winCheck;
+      if (checkForWins()){
+        const playerStatusRef = document.querySelector('.player-status');
+        playerStatusRef.innerHTML = ``;
+        const playerStatusRefHTML =
+        `
+        <p>
+        ${activePlayer.name} (${activePlayer.color}) won! 
+        </p>
+        `;
+        playerStatusRef.innerHTML = playerStatusRefHTML;
+
+        const boardRef = document.querySelector('.board');
+        boardRef.innerHTML = ``;
+
+        reset();
+      }
+      else if (checkIfFilled() && !checkForWins()){
+        const playerStatusRef = document.querySelector('.player-status');
+        playerStatusRef.innerHTML = ``;
+        const playerStatusRefHTML =
+        `
+        <p>
+        Stalemate.
+        </p>
+        `;
+        playerStatusRef.innerHTML = playerStatusRefHTML;
+
+        const boardRef = document.querySelector('.board');
+        boardRef.innerHTML = ``;
+
+        reset();
+      }
     }
     else{
       console.log('Invalid move: chose occupied square')
-      return false;
     }
   };
 
-  return {actionOnBoard, getActivePlayer};
+  const getBoard = () => board.getBoard();
+
+  const reset = () => {
+
+    const buttonAftermathRef = document.createElement('div');
+    buttonAftermathRef.classList.add('button-aftermath');
+    const buttonAftermathRefInnerHTML =
+    `
+    <button class = "button-reset">
+      Reset
+    </button>
+
+    <button>
+      Go Back To Home
+    </button>
+    `;
+    buttonAftermathRef.innerHTML = buttonAftermathRefInnerHTML;
+
+    const gameRef = document.querySelector('.tic-tac-toe-game');
+    gameRef.appendChild(buttonAftermathRef);
+
+    const buttonResetRef = document.querySelector('.button-reset');
+    buttonResetRef.addEventListener('click', () => {
+      buttonAftermathRef.remove();
+      displayController();
+    });
+  };
+
+  return {actionOnBoard, getActivePlayer, getBoard, checkForWins};
 }
 
+function displayController(){
+  //html linkers
+  const playerStatusRef = document.querySelector('.player-status');
+  const boardRef = document.querySelector('.board');
 
-/* 
-test row win
+  const game = gameController();
 
-let game = gameController();
+  const renderBoard = () => {
+    // Change the Player Turn Notifier
+    const playerStatusRefHTML =
+    `
+    <p>
+      Turn: ${game.getActivePlayer().name}
+    </p>
+    `;
+    playerStatusRef.innerHTML = playerStatusRefHTML;
 
-let value = game.actionOnBoard(0, 0);
-console.log(value);
+    // Change the board
+    const board = game.getBoard();
 
-value = game.actionOnBoard(1, 0);
-console.log(value);
+    // Clear the board
+    boardRef.innerHTML = ``;
 
-value = game.actionOnBoard(1, 1);
-console.log(value);
+    let boardHTML = ``;
 
-value = game.actionOnBoard(2, 0);
-console.log(value);
+    for (let rowIndex = 0; rowIndex < 3; rowIndex++){
+      for (let colIndex = 0; colIndex < 3; colIndex++){
+        boardHTML +=
+        `
+        <div class = "cell">
+          <button class = "button-${rowIndex}-${colIndex}">
+            <p class = "${board[rowIndex][colIndex].getColorValue()}">
+              ${board[rowIndex][colIndex].getCellSymbol()}
+            </p>
+          </button>
+        </div>
+        `;
+      }
+    }
+    boardRef.innerHTML = boardHTML;
 
-value = game.actionOnBoard(0, 2);
-console.log(value);
+    for (let rowIndex = 0; rowIndex < 3; rowIndex++){
+      for (let colIndex = 0; colIndex < 3; colIndex++){
+        addActionClick(rowIndex, colIndex, `button-${rowIndex}-${colIndex}`);
+      }
+    }
+  }
 
-*/
+  const addActionClick = (row, column, buttonId) => {
+    const buttonRef = document.querySelector(`.${buttonId}`);
+    buttonRef.addEventListener('click', () =>{
+      game.actionOnBoard(row, column);
+      if (!game.checkForWins()){
+        renderBoard();
+      }
+    });
+  };
 
+  renderBoard();
+}
 
-
-/* 
-
-test col win and test occupied square check
-
-let game = gameController();
-
-let value = game.actionOnBoard(0, 0);
-console.log(value);
-
-value = game.actionOnBoard(0, 0);
-console.log(value);
-
-value = game.actionOnBoard(0, 1);
-console.log(value);
-
-value = game.actionOnBoard(1, 0);
-console.log(value);
-
-value = game.actionOnBoard(1, 1);
-console.log(value);
-
-value = game.actionOnBoard(2, 0);
-console.log(value);
-
-*/
-
-/*
-
-test diag win
-
-let game = gameController();
-
-let value = game.actionOnBoard(1, 0);
-console.log(value);
-
-value = game.actionOnBoard(1, 1);
-console.log(value);
-
-value = game.actionOnBoard(2, 0);
-console.log(value);
-
-value = game.actionOnBoard(2, 2);
-console.log(value);
-
-value = game.actionOnBoard(0, 2);
-console.log(value);
-
-value = game.actionOnBoard(0, 0);
-console.log(value);
-
-*/
-
-
-/* 
-
-test mid-game no win
-
-let game = gameController();
-
-let value = game.actionOnBoard(0, 0);
-console.log(value);
-
-value = game.actionOnBoard(0, 0);
-console.log(value);
-
-value = game.actionOnBoard(0, 1);
-console.log(value);
-
-value = game.actionOnBoard(1, 0);
-console.log(value);
-
-value = game.actionOnBoard(1, 1);
-console.log(value);
-
-value = game.actionOnBoard(2, 1);
-console.log(value);
-
-value = game.actionOnBoard(2, 0);
-console.log(value);
-
-*/
-
+displayController();
