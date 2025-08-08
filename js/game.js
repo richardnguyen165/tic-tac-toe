@@ -1,3 +1,51 @@
+function userInput(){
+  const connectInput = () => {
+    const playerOneInputRef = document.querySelector('.user-player-one-input');
+    const playerTwoInputRef = document.querySelector('.user-player-two-input');
+    const playButtonRef = document.querySelector('.user-play');
+
+    playButtonRef.addEventListener('click', () => {
+      if (!playerOneInputRef.value){
+        alert('Enter Player One Name!');
+      }
+      else if (!playerTwoInputRef.value){
+        alert('Enter Player Two Name!');
+      }
+      else{
+        displayController(playerOneInputRef.value, playerTwoInputRef.value);
+      }
+    });
+  }
+
+  const bodyRef = document.querySelector('body');
+  bodyRef.innerHTML = 
+  `
+  <div class = "user-container">
+    <div class = "user-player-container">
+      <div class = "user-player">
+        <p>Player One</p>
+        <input class = "user-player-one-input" type = "text">
+      </div>
+
+      <div class = "user-player">
+        <p>Player Two</p>
+        <input class = "user-player-two-input" type = "text">
+      </div>
+    </div>
+
+    <div class = "user-input-buttons">
+      <button class = "user-play">Play</button>
+      <a href = "../index.html"><button class = "user-back-to-home">Back To Home</button></a>
+    </div>
+  </div>
+  `
+  connectInput();
+}
+
+/*
+board.html
+*/
+
 function Board(){
   const rows = 3, columns = 3;
 
@@ -59,7 +107,7 @@ function Cell(){
 }
 
 // default parameters for naming
-function gameController(playerOneName = "Player One", playerTwoName = "Player Two") {
+function gameController(playerOneName, playerTwoName) {
 
   const playerDB = {
     playerOne : {
@@ -211,14 +259,15 @@ function gameController(playerOneName = "Player One", playerTwoName = "Player Tw
   return {actionOnBoard, getActivePlayer, getBoard, checkForWins};
 }
 
-function displayController(){
+function displayController(playerOneName = "Player One", playerTwoName = "Player Two"){
   //html linkers
-  const playerStatusRef = document.querySelector('.player-status');
-  const boardRef = document.querySelector('.board');
 
-  const game = gameController();
-
+  const game = gameController(playerOneName, playerTwoName);
+  
   const renderBoard = () => {
+    const playerStatusRef = document.querySelector('.player-status');
+    const boardRef = document.querySelector('.board');
+
     // Change the Player Turn Notifier
     const playerStatusRefHTML =
     `
@@ -269,7 +318,25 @@ function displayController(){
     });
   };
 
+  const bodyRef = document.querySelector('body');
+  bodyRef.innerHTML = 
+  `
+  <div class = "container">
+    <div class = "tic-tac-toe-title-container">
+      <div class = "tic-tac-toe-title">
+        Tic-Tac-Toe
+      </div>
+    </div>
+
+    <div class = "tic-tac-toe-game-container">
+      <div class = "tic-tac-toe-game">
+        <div class = "player-status"></div>
+        <div class = "board"></div>
+      </div>
+    </div>
+  </div>
+  `
   renderBoard();
 }
 
-displayController();
+userInput();

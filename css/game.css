@@ -57,23 +57,105 @@ h1, h2, h3, h4, h5, h6 {
 
 /*CSS Reset: https://www.joshwcomeau.com/css/custom-css-reset/*/
 
+
 /* makes boday span 100% of the screen, height and length wise*/
 html, body {
   margin: 0;
   height: 100%;
 }
 
-.container{
+.user-container{
   width: inherit;
   height: inherit;
 
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   gap: 50px;
+}
+
+.user-player-container{
+  display: flex;
+  gap: 50px;
+}
+
+.user-input-buttons{
+  display: flex;
+  gap: 20px;
 }
 
 button{
   cursor: pointer;
+}
+
+
+.container{
+  display: grid;
+  width: inherit;
+  height: inherit;
+
+  grid-template-rows: 1fr 9fr;
+  grid-template-columns: 1fr;
+}
+
+.tic-tac-toe-title-container{
+  display: grid;
+  grid-row: 1 / 2;
+}
+
+.tic-tac-toe-game-container{
+  display: grid;
+  grid-row: 2 / 3;
+}
+
+.tic-tac-toe-title{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tic-tac-toe-game{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.board{
+  display: grid;
+
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  row-gap: 20px;
+  column-gap: 20px;
+}
+
+.cell{
+  width: 100px;
+  height: 100px;
+}
+
+.cell > button{
+  width: inherit;
+  height: inherit;
+  background: transparent;
+}
+
+.red, .blue{
+  font-size: 50px;
+  text-align: center;
+}
+
+.red{
+  color: red;
+}
+
+.blue{
+  color: blue;
+}
+
+.button-aftermath{
+  display: flex;
+  gap: 20px;
 }
