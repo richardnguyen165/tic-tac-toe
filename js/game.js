@@ -42,10 +42,35 @@ function userInput(){
   connectInput();
 }
 
+function Game(playerOneInfo, playerTwoInfo, boardMoves, winner){
+
+  // Getters
+  const getplayerOneInfoSymbol = () => playerOneInfo.symbol;
+  const getplayerOneInfoColor = () => playerOneInfo.color;
+  const getplayerOneInfoName = () => playerOneInfo.name;
+
+  const getplayerTwoInfoSymbol = () => playerTwoInfo.symbol;
+  const getplayerTwoInfoColor = () => playerTwoInfo.color;
+  const getplayerTwoInfoName = () => playerTwoInfo.name;
+
+  const getBoardMoves = () => boardMoves;
+
+  const getWinner = () => winner;
+
+  return {getBoardMoves, getplayerOneInfoSymbol, getplayerOneInfoColor, getplayerOneInfoName, getplayerTwoInfoSymbol, getplayerTwoInfoColor, getplayerTwoInfoName, getBoardMoves, getWinner}
+}
+
+function storeGame(finishedGame){
+  const localStorageRef = JSON.parse(localStorage.getItem('allGames')) || [];
+  localStorageRef.push(finishedGame);
+  localStorage.setItem('allGames', JSON.stringify(localStorageRef));
+}
+
 function Board(){
   const rows = 3, columns = 3;
 
   const board = [];
+  const moves = [];
 
   // Initializing the board
 
@@ -55,7 +80,11 @@ function Board(){
       board[rowIndex].push(Cell());
     }
   }
+
   const getBoard = () => board;
+  const getMoves = () => moves;
+
+  moves.push(board);
 
   const changeCell = (row, column, playerValue) => {
     // meaning the cell already has a x and o on it already
@@ -64,6 +93,7 @@ function Board(){
     }
 
     board[row][column].changeCellValue(playerValue);
+    moves.push(board);
     return true;
   };
 
@@ -200,7 +230,7 @@ function gameController(playerOneName, playerTwoName) {
         const boardRef = document.querySelector('.board');
         boardRef.innerHTML = ``;
 
-        reset();
+        reset(activePlayer);
       }
       else if (checkIfFilled() && !checkForWins()){
         const playerStatusRef = document.querySelector('.player-status');
@@ -216,7 +246,7 @@ function gameController(playerOneName, playerTwoName) {
         const boardRef = document.querySelector('.board');
         boardRef.innerHTML = ``;
 
-        reset();
+        reset(null);
       }
     }
     else{
@@ -226,7 +256,7 @@ function gameController(playerOneName, playerTwoName) {
 
   const getBoard = () => board.getBoard();
 
-  const reset = () => {
+  const reset = (gameResult) => {
 
     const buttonAftermathRef = document.createElement('div');
     buttonAftermathRef.classList.add('button-aftermath');
@@ -236,20 +266,26 @@ function gameController(playerOneName, playerTwoName) {
       Reset
     </button>
 
-    <button>
-      Go Back To Home
-    </button>
+    <a href = "../index.html">
+      <button>
+        Go Back To Home
+      </button>
+    </a>
     `;
     buttonAftermathRef.innerHTML = buttonAftermathRefInnerHTML;
 
     const gameRef = document.querySelector('.tic-tac-toe-game');
     gameRef.appendChild(buttonAftermathRef);
 
+    
     const buttonResetRef = document.querySelector('.button-reset');
     buttonResetRef.addEventListener('click', () => {
       buttonAftermathRef.remove();
       displayController();
     });
+
+    let finishedGame = Game(playerDB.playerOne, playerDB.playerTwo, board.getMoves(), gameResult);
+    storeGame(finishedGame);
   };
 
   return {actionOnBoard, getActivePlayer, getBoard, checkForWins};
