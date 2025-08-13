@@ -42,27 +42,31 @@ function userInput(){
   connectInput();
 }
 
-function Game(playerOneInfo, playerTwoInfo, boardMoves, winner){
-
-  // Getters
-  const getplayerOneInfoSymbol = () => playerOneInfo.symbol;
-  const getplayerOneInfoColor = () => playerOneInfo.color;
-  const getplayerOneInfoName = () => playerOneInfo.name;
-
-  const getplayerTwoInfoSymbol = () => playerTwoInfo.symbol;
-  const getplayerTwoInfoColor = () => playerTwoInfo.color;
-  const getplayerTwoInfoName = () => playerTwoInfo.name;
-
-  const getBoardMoves = () => boardMoves;
-
-  const getWinner = () => winner;
-
-  return {getBoardMoves, getplayerOneInfoSymbol, getplayerOneInfoColor, getplayerOneInfoName, getplayerTwoInfoSymbol, getplayerTwoInfoColor, getplayerTwoInfoName, getBoardMoves, getWinner}
-}
-
-function storeGame(finishedGame){
+function storeGame(playerOneInfo, playerTwoInfo, boardMoves, winner){
+  // localStorage destroys closures within objects
   const localStorageRef = JSON.parse(localStorage.getItem('allGames')) || [];
-  localStorageRef.push(finishedGame);
+  let newBoard = [];
+
+  console.log(boardMoves);
+
+  for (let boardMoveNumber = 0; boardMoveNumber < boardMoves.length; boardMoveNumber++){
+    let newGame = []
+    let currentMove = boardMoves[boardMoveNumber];
+    for (let rowIndex = 0; rowIndex < 3; rowIndex++){
+      let newRow = []
+      for (let colIndex = 0; colIndex < 3; colIndex++){
+        newRow.push({
+          cellValue: currentMove[rowIndex][colIndex].getCellValue(),
+          colorValue: currentMove[rowIndex][colIndex].getColorValue(),
+          cellSymbol: currentMove[rowIndex][colIndex].getCellSymbol(),
+        })
+      }
+      newGame.push(newRow);
+    }
+    newBoard.push(newGame);
+  }
+
+  localStorageRef.push([playerOneInfo, playerTwoInfo, newBoard, winner]);
   localStorage.setItem('allGames', JSON.stringify(localStorageRef));
 }
 
@@ -84,17 +88,31 @@ function Board(){
   const getBoard = () => board;
   const getMoves = () => moves;
 
-  moves.push(board);
-
   const changeCell = (row, column, playerValue) => {
     // meaning the cell already has a x and o on it already
-    if (board[row][column].getCellValue() !== 0){
+    if (board[row][column].getCellValue() !== ''){
       return false;
     }
 
     board[row][column].changeCellValue(playerValue);
-    moves.push(board);
+    cloneCurrentBoard();
     return true;
+  };
+
+  const cloneCurrentBoard = () => {
+    const currentMoveBoard = []
+    for (let rowIndex = 0; rowIndex < rows; rowIndex++){
+      currentMoveBoard.push([]);
+      for (let colIndex = 0; colIndex < columns; colIndex++){
+        const copyCell = Cell();
+        const cellValue = board[rowIndex][colIndex];
+        if (cellValue.getCellValue()){
+          copyCell.changeCellValue(cellValue.getCellValue());
+        }
+        currentMoveBoard[rowIndex].push(copyCell);
+      }
+    }
+    moves.push(currentMoveBoard);
   };
 
   // for console testing
@@ -109,11 +127,13 @@ function Board(){
     console.log(printString);
   };
 
-  return {getBoard, changeCell, printBoard}
+  cloneCurrentBoard();
+
+  return {getBoard, changeCell, printBoard, getMoves}
 }
 
 function Cell(){
-  let cellValue = 0;
+  let cellValue = '';
   let colorValue = '';
   let cellSymbol = '';
 
@@ -157,7 +177,7 @@ function gameController(playerOneName, playerTwoName) {
     let firstValue = check[0].getCellValue();
     let testArray = check.filter(cellMate => cellMate.getCellValue() === firstValue);
     // because, all 3 values would be the same to each other 
-    return testArray.length === 3 && firstValue !== 0;
+    return testArray.length === 3 && firstValue !== '';
   };
 
   const checkForWins = () => {
@@ -195,7 +215,7 @@ function gameController(playerOneName, playerTwoName) {
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
       for (let colIndex = 0; colIndex < 3; colIndex++){
         console.log()
-        if (boardReplica[rowIndex][colIndex].getCellValue() === 0){
+        if (boardReplica[rowIndex][colIndex].getCellValue() === ''){
           return false;
         }
       }
@@ -214,8 +234,9 @@ function gameController(playerOneName, playerTwoName) {
     // Prevents user from pressing after wins
     let validMove = board.changeCell(row, column, activePlayer.value);
     if (validMove){
-      swapActivePlayers();
       board.printBoard();
+      console.log(checkForWins());
+      console.log(checkIfFilled() && !checkForWins());
       if (checkForWins()){
         const playerStatusRef = document.querySelector('.player-status');
         playerStatusRef.innerHTML = ``;
@@ -247,6 +268,9 @@ function gameController(playerOneName, playerTwoName) {
         boardRef.innerHTML = ``;
 
         reset(null);
+      }
+      else{
+        swapActivePlayers();
       }
     }
     else{
@@ -281,11 +305,10 @@ function gameController(playerOneName, playerTwoName) {
     const buttonResetRef = document.querySelector('.button-reset');
     buttonResetRef.addEventListener('click', () => {
       buttonAftermathRef.remove();
-      displayController();
+      userInput();
     });
 
-    let finishedGame = Game(playerDB.playerOne, playerDB.playerTwo, board.getMoves(), gameResult);
-    storeGame(finishedGame);
+    storeGame(playerDB.playerOne, playerDB.playerTwo, board.getMoves(), gameResult);
   };
 
   return {actionOnBoard, getActivePlayer, getBoard, checkForWins};

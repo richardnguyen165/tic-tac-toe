@@ -1,7 +1,26 @@
-function renderMatchHistory(){
-  containerRef.innerHTML = ``;
-  const containerRef = document.querySelector('.container');
+function Game(playerOneInfo, playerTwoInfo, boardMoves, winner){
 
+  // Getters
+  const getplayerOneInfoSymbol = () => playerOneInfo.symbol;
+  const getplayerOneInfoColor = () => playerOneInfo.color;
+  const getplayerOneInfoName = () => playerOneInfo.name;
+
+  const getplayerTwoInfoSymbol = () => playerTwoInfo.symbol;
+  const getplayerTwoInfoColor = () => playerTwoInfo.color;
+  const getplayerTwoInfoName = () => playerTwoInfo.name;
+
+  const getBoardMoves = () => boardMoves;
+
+  const getWinner = () => winner;
+
+  return {getBoardMoves, getplayerOneInfoSymbol, getplayerOneInfoColor, getplayerOneInfoName, getplayerTwoInfoSymbol, getplayerTwoInfoColor, getplayerTwoInfoName, getBoardMoves, getWinner}
+}
+
+function renderMatchHistory(){
+  let containerRef = document.querySelector('.container');
+  containerRef.classList.add('match-history-container');
+
+  containerRef.innerHTML = ``;
   containerRefInnerHTML = 
   `
   <div>
@@ -9,10 +28,13 @@ function renderMatchHistory(){
   </div>
   `;
 
-  const gameStorageRef = JSON.parse(localStorage.getItem('allGames'));
+  const gameStorageRef = JSON.parse(localStorage.getItem('allGames')) || [];
   let gameNumber = 1;
 
+  console.log(gameStorageRef);
+
   for (const gameItem of gameStorageRef){
+    const convertedGameItem = Game(gameItem[0], gameItem[1], gameItem[2], gameItem[3]);
     containerRefInnerHTML += 
     `
     <div class = "game-info game-info-${gameNumber}">
@@ -23,12 +45,12 @@ function renderMatchHistory(){
       <div>
         Players:
         <div>
-          ${gameItem.getplayerOneInfoName()} (${gameItem.getplayerOneInfoColor()}) vs. ${gameItem.getplayerTwoInfoName()} (${gameItem.getplayerTwoInfoColor()})
+          ${convertedGameItem.getplayerOneInfoName()} (${convertedGameItem.getplayerOneInfoColor()}) vs. ${convertedGameItem.getplayerTwoInfoName()} (${convertedGameItem.getplayerTwoInfoColor()})
         </div>
       </div>
 
       <div>
-        Result: ${gameItem.getWinner() ? getWinner.getWinner() + ' won' : 'Stalemate.'}
+        Result: ${convertedGameItem.getWinner() ? convertedGameItem.getWinner().name + ' won' : 'Stalemate.'}
       </div>
 
       <div>
@@ -46,39 +68,57 @@ function renderMatchHistory(){
 
   containerRef.innerHTML = containerRefInnerHTML;
 
-  for (let i = 1; i < gameNumber; i++){
-    const deleteButtonRef = document.querySelector(`.game-info-delete-button-${gameNumber}`);
-    const elementToDelete = document.querySelector(`.game-info-${gameNumber}`);
-    deleteButtonRef.addEventListener('click', () => elementToDelete.remove());
-    gameStorageRef.splice(i - 1, 1);
-    localStorage.setItem('allGames', JSON.stringify(gameStorageRef));
-    renderMatchHistory();
+  for (let i = 1; i <= gameStorageRef.length; i++){
+    const deleteButtonRef = document.querySelector(`.game-info-delete-button-${i}`);
+    const elementToDelete = document.querySelector(`.game-info-${i}`);
+    deleteButtonRef.addEventListener('click', () => {
+      elementToDelete.remove()
+      gameStorageRef.splice(i - 1, 1);
+      localStorage.setItem('allGames', JSON.stringify(gameStorageRef));
+      renderMatchHistory();
+    });
   }
 
 
-  for (let i = 1; i < gameNumber; i++){
-    const reviewButtonRef = document.querySelector(`.game-info-review-button-${gameNumber}`);
-    reviewButtonRef.addEventListener('click', () => renderSingleMatch(gameNumber));
+  for (let i = 1; i <= gameStorageRef.length; i++){
+    const reviewButtonRef = document.querySelector(`.game-info-review-button-${i}`);
+    reviewButtonRef.addEventListener('click', () => {
+      containerRef.classList.remove('match-history-container');
+      renderSingleMatch(i)});
   }
 }
 
-function renderSingleMatch(gameNumber, moveNumber = 1){
-  containerRef = ``;
+function renderSingleMatch(gameNumber, moveNumber = 0){
+  const containerRef = document.querySelector('.container');
+  containerRef.classList.add('game-container');
+
+  const gameStorageRef = JSON.parse(localStorage.getItem('allGames'))[gameNumber - 1];
+  const gameRecord = Game(gameStorageRef[0], gameStorageRef[1], gameStorageRef[2], gameStorageRef[3]);
+  const currentMove = gameRecord.getBoardMoves()[moveNumber];
+
+
+  containerRef.innerHTML = ``;
 
   containerRef.innerHTML = 
   `
+    <div>
+      <button class = "back">
+        Back
+      </button>
+    </div>
+
     <div class = "match-grid">
     </div>
 
-    <div class = "buttons>
-      ${moveNumber > 1 ? `
+    <div class = "buttons">
+      ${moveNumber < gameRecord.getBoardMoves().length - 1 ? `
       <button class = "next">
         Next
       </button>  
       ` : ``
       }
 
-      ${moveNumber < gameRecord.length() ?`
+      ${moveNumber > 0 ?`
         <button class = "previous">
           Previous
         </button> 
@@ -88,26 +128,28 @@ function renderSingleMatch(gameNumber, moveNumber = 1){
   `
   ;
 
-  const gameStorageRef = JSON.parse(localStorage.getItem('allGames'));
-  const gameRecord = gameStorageRef[gameNumber - 1];
-  const currentMove = gameRecord.getBoardMoves()[moveNumber];
-
   const matchGridRef = document.querySelector('.match-grid');
-
   const nextButtonRef = document.querySelector('.next');
   const previousButtonRef = document.querySelector('.previous');
+  const backButtonRef = document.querySelector('.back');
 
-  nextButtonRef.addEventListener('click', () => {
-    if (moveNumber < gameRecord.length()){
-      renderSingleMatch(gameNumber, moveNumber + 1);
-    }
-  })
+  if (moveNumber < gameRecord.getBoardMoves().length - 1){
+    nextButtonRef.addEventListener('click', () => {
+      if (moveNumber < gameRecord.getBoardMoves().length){
+        renderSingleMatch(gameNumber, moveNumber + 1);
+      }
+    })
+  }
 
-  previousButtonRef.addEventListener('click', () => {
-    if (moveNumber > 1){
-      renderSingleMatch(gameNumber, moveNumber - 1);
-    }
-  })
+  if (moveNumber > 0){
+      previousButtonRef.addEventListener('click', () => {
+      if (moveNumber > 0){
+        renderSingleMatch(gameNumber, moveNumber - 1);
+      }
+    })
+  }
+
+  backButtonRef.addEventListener('click', () => renderMatchHistory());
 
   matchGridRefInnerHTML = ``;
 
@@ -117,8 +159,8 @@ function renderSingleMatch(gameNumber, moveNumber = 1){
       `
       <div class = "cell">
         <button class = "button-${rowIndex}-${colIndex}">
-          <p class = "${currentMove[rowIndex][colIndex].getColorValue()}">
-            ${currentMove[rowIndex][colIndex].getCellSymbol()}
+          <p class = "${currentMove[rowIndex][colIndex].colorValue}">
+            ${currentMove[rowIndex][colIndex].cellSymbol}
           </p>
         </button>
       </div>
