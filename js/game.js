@@ -23,12 +23,12 @@ function userInput(){
   <div class = "user-container">
     <div class = "user-player-container">
       <div class = "user-player">
-        <p>Player One</p>
+        <p>Player One (<span class = "blue-input">X</span>) </p>
         <input class = "user-player-one-input" type = "text">
       </div>
 
       <div class = "user-player">
-        <p>Player Two</p>
+        <p>Player Two (<span class = "red-input">O</span>) </p>
         <input class = "user-player-two-input" type = "text">
       </div>
     </div>
@@ -214,7 +214,6 @@ function gameController(playerOneName, playerTwoName) {
 
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
       for (let colIndex = 0; colIndex < 3; colIndex++){
-        console.log()
         if (boardReplica[rowIndex][colIndex].getCellValue() === ''){
           return false;
         }
@@ -234,15 +233,12 @@ function gameController(playerOneName, playerTwoName) {
     // Prevents user from pressing after wins
     let validMove = board.changeCell(row, column, activePlayer.value);
     if (validMove){
-      board.printBoard();
-      console.log(checkForWins());
-      console.log(checkIfFilled() && !checkForWins());
       if (checkForWins()){
         const playerStatusRef = document.querySelector('.player-status');
         playerStatusRef.innerHTML = ``;
         const playerStatusRefHTML =
         `
-        <p>
+        <p class = "${activePlayer.color}-player-status-text result-text">
         ${activePlayer.name} (${activePlayer.color}) won! 
         </p>
         `;
@@ -258,7 +254,7 @@ function gameController(playerOneName, playerTwoName) {
         playerStatusRef.innerHTML = ``;
         const playerStatusRefHTML =
         `
-        <p>
+        <p class = "result-text">
         Stalemate.
         </p>
         `;
@@ -273,9 +269,6 @@ function gameController(playerOneName, playerTwoName) {
         swapActivePlayers();
       }
     }
-    else{
-      console.log('Invalid move: chose occupied square')
-    }
   };
 
   const getBoard = () => board.getBoard();
@@ -286,12 +279,12 @@ function gameController(playerOneName, playerTwoName) {
     buttonAftermathRef.classList.add('button-aftermath');
     const buttonAftermathRefInnerHTML =
     `
-    <button class = "button-reset">
+    <button class = "button-reset-aftermath">
       Reset
     </button>
 
     <a href = "../index.html">
-      <button>
+      <button class = "button-home-aftermath">
         Go Back To Home
       </button>
     </a>
@@ -302,7 +295,7 @@ function gameController(playerOneName, playerTwoName) {
     gameRef.appendChild(buttonAftermathRef);
 
     
-    const buttonResetRef = document.querySelector('.button-reset');
+    const buttonResetRef = document.querySelector('.button-reset-aftermath');
     buttonResetRef.addEventListener('click', () => {
       buttonAftermathRef.remove();
       userInput();
@@ -311,7 +304,7 @@ function gameController(playerOneName, playerTwoName) {
     storeGame(playerDB.playerOne, playerDB.playerTwo, board.getMoves(), gameResult);
   };
 
-  return {actionOnBoard, getActivePlayer, getBoard, checkForWins};
+  return {actionOnBoard, getActivePlayer, getBoard, checkForWins, checkIfFilled};
 }
 
 function displayController(playerOneName = "Player One", playerTwoName = "Player Two"){
@@ -326,8 +319,8 @@ function displayController(playerOneName = "Player One", playerTwoName = "Player
     // Change the Player Turn Notifier
     const playerStatusRefHTML =
     `
-    <p>
-      Turn: ${game.getActivePlayer().name}
+    <p class = "turn-status">
+      Turn: <span class = "${game.getActivePlayer().color}-player-status-text">${game.getActivePlayer().name}</span>
     </p>
     `;
     playerStatusRef.innerHTML = playerStatusRefHTML;
@@ -346,7 +339,7 @@ function displayController(playerOneName = "Player One", playerTwoName = "Player
         `
         <div class = "cell">
           <button class = "button-${rowIndex}-${colIndex}">
-            <p class = "${board[rowIndex][colIndex].getColorValue()}">
+            <p class = "${board[rowIndex][colIndex].getColorValue()}-cell">
               ${board[rowIndex][colIndex].getCellSymbol()}
             </p>
           </button>
@@ -367,7 +360,7 @@ function displayController(playerOneName = "Player One", playerTwoName = "Player
     const buttonRef = document.querySelector(`.${buttonId}`);
     buttonRef.addEventListener('click', () =>{
       game.actionOnBoard(row, column);
-      if (!game.checkForWins()){
+      if (!game.checkForWins() && !(game.checkIfFilled() && !game.checkForWins())){
         renderBoard();
       }
     });

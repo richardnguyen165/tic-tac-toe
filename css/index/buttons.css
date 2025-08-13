@@ -9,6 +9,12 @@ button{
   padding-bottom: 10px;
   padding-top: 10px;
   border-radius: 10px;
+  transition: box-shadow 0.5s;
+}
+
+button:hover{
+  box-shadow: 5px 5px 10px grey;
+  transition: box-shadow 0.5s;
 }
 
 .buttons-container{
@@ -22,8 +28,4 @@ button{
   justify-content: center;
   align-items: center;
   gap: 5vw
-}
-
-button:hover{
-  box-shadow: 5px 5px 10px grey;
 }

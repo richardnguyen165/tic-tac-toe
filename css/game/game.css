@@ -1,0 +1,87 @@
+.container{
+  display: grid;
+  width: inherit;
+  height: inherit;
+
+  grid-template-rows: 1fr 9fr;
+  grid-template-columns: 1fr;
+}
+
+.tic-tac-toe-title-container{
+  display: grid;
+  grid-row: 1 / 2;
+}
+
+.tic-tac-toe-game-container{
+  display: grid;
+  grid-row: 2 / 3;
+}
+
+.tic-tac-toe-title{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tic-tac-toe-game{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.board{
+  display: grid;
+
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+.cell{
+  width: 100px;
+  height: 100px;
+}
+
+.cell > button{
+  width: inherit;
+  height: inherit;
+  background: transparent;
+}
+
+.cell:nth-child(3n) > button, .cell:nth-child(3n + 1) > button{
+  border-right: none;
+  border-left: none;
+}
+
+.cell:nth-child(1) > button, .cell:nth-child(2) > button, .cell:nth-child(3) > button{
+  border-top: none;
+}
+
+.cell:nth-child(4) > button, .cell:nth-child(5) > button, .cell:nth-child(6) > button{
+  border-top: none;
+  border-bottom: none;
+}
+
+.cell:nth-child(7) > button, .cell:nth-child(8) > button, .cell:nth-child(9) > button{
+  border-bottom: none;
+}
+
+.red-cell, .blue-cell{
+  font-size: 50px;
+  text-align: center;
+}
+
+
+.red-cell, .Red-player-status-text{
+  color: red;
+}
+
+.blue-cell, .Blue-player-status-text{
+  color: blue;
+}
+
+.turn-status{
+  font-size: 25px;
+}
+

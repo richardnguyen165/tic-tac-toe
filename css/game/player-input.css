@@ -1,0 +1,78 @@
+/* makes boday span 100% of the screen, height and length wise*/
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+*{
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
+}
+
+.user-container{
+  width: inherit;
+  height: inherit;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.user-player-container{
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.user-player{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-input-buttons{
+  display: flex;
+  gap: 20px;
+}
+
+input{
+  border: 1px grey solid;
+  border-radius: 10px;
+  width: 200px;
+  padding: 7px;
+}
+
+button{
+  cursor: pointer;
+}
+
+.red-input{
+  color: red;
+}
+
+
+.blue-input{
+  color: blue;
+}
+
+.user-input-buttons > button, .user-back-to-home{
+  cursor: pointer;
+  background-color: 	#1DA1F2;
+  border: none;
+  color: white;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  border-radius: 10px;
+  transition: box-shadow 0.5s;
+
+}
+
+.user-input-buttons > button:hover{
+  box-shadow: 5px 5px 10px grey;
+  transition: box-shadow 0.5s;
+}
+
+

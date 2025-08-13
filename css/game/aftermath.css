@@ -1,0 +1,27 @@
+.button-aftermath{
+  display: flex;
+  gap: 20px;
+}
+
+.button-reset-aftermath, .button-home-aftermath{
+  cursor: pointer;
+  background-color: 	#1DA1F2;
+  border: none;
+  color: white;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  border-radius: 10px;
+  transition: box-shadow 0.5s;
+
+}
+
+.button-reset-aftermath:hover, .button-home-aftermath:hover{
+  box-shadow: 5px 5px 10px grey;
+  transition: box-shadow 0.5s;
+}
+
+.result-text{
+  font-size: 25px;
+}

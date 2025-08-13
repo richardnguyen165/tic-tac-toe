@@ -1,0 +1,11 @@
+/* FONT FOR LOGO */
+@font-face {
+  font-family: 'logo-font';
+  src: url(../../webfontkit-20250722-225433/norse-bold-webfont.woff2) format('woff2');
+  font-display: swap;
+}
+
+.tic-tac-toe-title{
+  font-family: 'logo-font', Arial, Helvetica, sans-serif;
+  font-size: 50px;
+}
