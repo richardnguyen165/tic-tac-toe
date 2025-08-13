@@ -1,0 +1,29 @@
+button{
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
+  cursor: pointer;
+  background-color: 	#1DA1F2;
+  border: none;
+  color: white;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  border-radius: 10px;
+}
+
+.buttons-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner-button-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5vw
+}
+
+button:hover{
+  box-shadow: 5px 5px 10px grey;
+}
