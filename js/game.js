@@ -1,5 +1,10 @@
-function userInput(){
-  const connectInput = () => {
+class userInput{
+  constructor(){
+    this.renderInput();
+    this.connectInput();
+  }
+
+  connectInput(){
     const playerOneInputRef = document.querySelector('.user-player-one-input');
     const playerTwoInputRef = document.querySelector('.user-player-two-input');
     const playButtonRef = document.querySelector('.user-play');
@@ -17,29 +22,30 @@ function userInput(){
     });
   }
 
-  const bodyRef = document.querySelector('body');
-  bodyRef.innerHTML = 
-  `
-  <div class = "user-container">
-    <div class = "user-player-container">
-      <div class = "user-player">
-        <p>Player One (<span class = "blue-input">X</span>) </p>
-        <input class = "user-player-one-input" type = "text">
+  renderInput(){
+    const bodyRef = document.querySelector('body');
+    bodyRef.innerHTML = 
+    `
+    <div class = "user-container">
+      <div class = "user-player-container">
+        <div class = "user-player">
+          <p>Player One (<span class = "blue-input">X</span>) </p>
+          <input class = "user-player-one-input" type = "text">
+        </div>
+
+        <div class = "user-player">
+          <p>Player Two (<span class = "red-input">O</span>) </p>
+          <input class = "user-player-two-input" type = "text">
+        </div>
       </div>
 
-      <div class = "user-player">
-        <p>Player Two (<span class = "red-input">O</span>) </p>
-        <input class = "user-player-two-input" type = "text">
+      <div class = "user-input-buttons">
+        <button class = "user-play">Play</button>
+        <a href = "../index.html"><button class = "user-back-to-home">Back To Home</button></a>
       </div>
     </div>
-
-    <div class = "user-input-buttons">
-      <button class = "user-play">Play</button>
-      <a href = "../index.html"><button class = "user-back-to-home">Back To Home</button></a>
-    </div>
-  </div>
   `
-  connectInput();
+  }
 }
 
 function storeGame(playerOneInfo, playerTwoInfo, boardMoves, winner){
@@ -298,7 +304,7 @@ function gameController(playerOneName, playerTwoName) {
     const buttonResetRef = document.querySelector('.button-reset-aftermath');
     buttonResetRef.addEventListener('click', () => {
       buttonAftermathRef.remove();
-      userInput();
+      new userInput();
     });
 
     storeGame(playerDB.playerOne, playerDB.playerTwo, board.getMoves(), gameResult);
@@ -387,4 +393,4 @@ function displayController(playerOneName = "Player One", playerTwoName = "Player
   renderBoard();
 }
 
-userInput();
+new userInput();
