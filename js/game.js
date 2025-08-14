@@ -1,9 +1,14 @@
+/* This is a JS file for the input, game and aftermath sections */
+
+// Responsible for showing the user input for users to interact with
 class userInput{
+  // Runs these functions to ensure the input is shown and working
   constructor(){
     this.renderInput();
     this.connectInput();
   }
 
+  // Gets values from the inputs and creates a new displayController object to start the game
   connectInput(){
     const playerOneInputRef = document.querySelector('.user-player-one-input');
     const playerTwoInputRef = document.querySelector('.user-player-two-input');
@@ -14,6 +19,7 @@ class userInput{
     });
   }
 
+  // Generates HTML to help display the user input screen
   renderInput(){
     const bodyRef = document.querySelector('body');
     bodyRef.innerHTML = 
@@ -40,6 +46,7 @@ class userInput{
   }
 }
 
+// Responsible for storing player info, all board moves, and the winner into local storage so that they can be viewed in match history catalogue
 class storeGame{
 
   playerOneInfo;
@@ -60,6 +67,7 @@ class storeGame{
     const localStorageRef = JSON.parse(localStorage.getItem('allGames')) || [];
     let newBoard = [];
 
+    // Decomplies the board because in localStorage, objects and functions break
     for (let boardMoveNumber = 0; boardMoveNumber < this.boardMoves.length; boardMoveNumber++){
       let newGame = []
       let currentMove = this.boardMoves[boardMoveNumber];
@@ -77,11 +85,13 @@ class storeGame{
       newBoard.push(newGame);
     }
 
+    // Stores into localStorage
     localStorageRef.push([this.playerOneInfo, this.playerTwoInfo, newBoard, this.winner]);
     localStorage.setItem('allGames', JSON.stringify(localStorageRef));
   }
 }
 
+// Responsible for the board (where users click on the board, and the game pretty much occurs on there)
 class Board{
   rows = 3;
   columns = 3;
@@ -91,6 +101,7 @@ class Board{
   constructor(){
     this._board = [];
     this._moves = [];
+    // initalizing board, and moving the new board into moves as the first step
     this.initializeBoard();
     this.cloneCurrentBoard();
   }
@@ -106,15 +117,7 @@ class Board{
     }
   }
 
-  get board(){
-    return this._board;
-  }
-
-
-  get moves(){
-    return this._moves;
-  }
-
+  // changing the cell of the board from a blank to an occupied one
   changeCell(row, column, playerValue){
     // meaning the cell already has a x and o on it already
     if (this._board[row][column].cellValue !== ''){
@@ -126,6 +129,7 @@ class Board{
     return true;
   };
 
+  // clones board, as we need to create new cell instances (or as they will reference each other, causing the moves to be lost)
   cloneCurrentBoard(){
     const currentMoveBoard = []
     for (let rowIndex = 0; rowIndex < this.rows; rowIndex++){
@@ -142,7 +146,7 @@ class Board{
     this._moves.push(currentMoveBoard);
   };
 
-  // for console testing
+  // for console testing, prints the entire board
   printBoard(){
   let printString = '';
     for (let rowIndex = 0; rowIndex < this.rows; rowIndex++){
@@ -153,8 +157,19 @@ class Board{
     }
     console.log(printString);
   };
+
+  // getters
+  get board(){
+    return this._board;
+  }
+
+
+  get moves(){
+    return this._moves;
+  }
 }
 
+// Responsible for storing of each cell on the board
 class Cell{
   _cellValue;
   _colorValue;
@@ -166,12 +181,14 @@ class Cell{
     this._cellSymbol = '';
   }
 
+  // Changing cell value once a player has clicked on that tile
   changeCellValue(playerValue){
     this._cellValue = playerValue;
     this._colorValue = playerValue === 1 ? "blue" : "red";
     this._cellSymbol = playerValue === 1 ? "X" : "O";
   };
   
+  // Getters
   get cellValue(){
     return this._cellValue;
   };
@@ -185,19 +202,22 @@ class Cell{
   }
 }
 
-// default parameters for naming
+// Acts as the back-end. Responsible for handling player moves, as well as checking for wins and stalemates
 class gameController{
 
   playerOneName;
   playerTwoName;
-  activePlayer;
-  board;
+  _activePlayer;
+  _board;
   playerDB;
 
-  constructor(playerOneName, playerTwoName){
+  
+  // default parameters for naming in case the inputs for the name choosing remain blank
+  constructor(playerOneName = "Player One", playerTwoName = "Player Two"){
     this.playerOneName = playerOneName;
     this.playerTwoName = playerTwoName;
-    this.board = new Board();
+    this._board = new Board();
+    // default player info
     this.playerDB = {
       playerOne : {
         name: playerOneName,
@@ -212,9 +232,10 @@ class gameController{
         color: "Red"
       }
     }
-    this.activePlayer = this.playerDB.playerOne;
+    this._activePlayer = this.playerDB.playerOne;
   }
 
+  // check if a row, column or diagonal consists of only one value (and that they are not blank)
   checkArrayForOneValue(check){
     let firstValue = check[0].cellValue;
     let testArray = check.filter(cellMate => cellMate.cellValue === firstValue);
@@ -222,8 +243,9 @@ class gameController{
     return testArray.length === 3 && firstValue !== '';
   };
 
+  // function responsible for determining if a win has occured
   checkForWins(){
-    const boardReplica = this.getBoard();
+    const boardReplica = this._board.board;
 
     // Check for row wins
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
@@ -251,8 +273,9 @@ class gameController{
     return this.checkArrayForOneValue([boardReplica[0][0], boardReplica[1][1], boardReplica[2][2]]) || this.checkArrayForOneValue([boardReplica[0][2], boardReplica[1][1], boardReplica[2][0]]);
   };
 
+  // Check if board is filled
   checkIfFilled(){
-    const boardReplica = this.getBoard();
+    const boardReplica = this._board.board;
 
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
       for (let colIndex = 0; colIndex < 3; colIndex++){
@@ -264,26 +287,27 @@ class gameController{
     return true;
   }
 
+  // Function used to help switch turns between two players
   swapActivePlayers = () => {
-    this.activePlayer = this.activePlayer === this.playerDB.playerOne ? this.playerDB.playerTwo : this.playerDB.playerOne;
+    this._activePlayer = this._activePlayer === this.playerDB.playerOne ? this.playerDB.playerTwo : this.playerDB.playerOne;
   }
-
-  getActivePlayer = () => this.activePlayer;
 
   // The board will have an eventlistener for each button, allowing it to pass row and col params
   actionOnBoard(row, column){
     // Prevents user from pressing after wins
-    let validMove = this.board.changeCell(row, column, this.activePlayer.value);
+    let validMove = this._board.changeCell(row, column, this._activePlayer.value);
+    // check if valid move before allowing to move on
     if (validMove){
       const winCheck = this.checkForWins();
       const fillCheck = this.checkIfFilled();
+      // check for win
       if (winCheck){
         const playerStatusRef = document.querySelector('.player-status');
         playerStatusRef.innerHTML = ``;
         const playerStatusRefHTML =
         `
-        <p class = "${this.activePlayer.color}-player-status-text result-text">
-        ${this.activePlayer.name} (${this.activePlayer.color}) won! 
+        <p class = "${this._activePlayer.color}-player-status-text result-text">
+        ${this._activePlayer.name} (${this._activePlayer.color}) won! 
         </p>
         `;
         playerStatusRef.innerHTML = playerStatusRefHTML;
@@ -291,8 +315,10 @@ class gameController{
         const boardRef = document.querySelector('.board');
         boardRef.innerHTML = ``;
 
-        this.reset(this.activePlayer);
+        // resets game, sends player name meaning someone won
+        this.reset(this._activePlayer);
       }
+      // check for stalemate
       else if (fillCheck && !winCheck){
         const playerStatusRef = document.querySelector('.player-status');
         playerStatusRef.innerHTML = ``;
@@ -307,16 +333,17 @@ class gameController{
         const boardRef = document.querySelector('.board');
         boardRef.innerHTML = ``;
 
+        // resets game, sends null meaning stalemate
         this.reset(null);
       }
+      // swap players if game is still in progress
       else{
         this.swapActivePlayers();
       }
     }
   };
 
-  getBoard = () => this.board.board;
-
+  // reset game
   reset(gameResult){
 
     const buttonAftermathRef = document.createElement('div');
@@ -339,16 +366,30 @@ class gameController{
     gameRef.appendChild(buttonAftermathRef);
 
     
+    // allows player to reset and go back to username input
     const buttonResetRef = document.querySelector('.button-reset-aftermath');
     buttonResetRef.addEventListener('click', () => {
       buttonAftermathRef.remove();
       new userInput();
     });
 
-    new storeGame(this.playerDB.playerOne, this.playerDB.playerTwo, this.board.moves, gameResult);
+    // stores the finished game
+    new storeGame(this.playerDB.playerOne, this.playerDB.playerTwo, this._board.moves, gameResult);
   };
+
+
+  // getters 
+  
+  get board(){
+    return this._board.board;
+  }
+
+  get activePlayer(){
+    return this._activePlayer;
+  }
 }
 
+// Responsible for manipualting DOM and showing the game to the user (the front-end)
 class displayController{
 
   playerOneName;
@@ -363,6 +404,7 @@ class displayController{
     this.renderBoard();
   }
 
+  // Rendering the body of the html so that the board and the game can appear
   renderBody(){
     const bodyRef = document.querySelector('body');
     bodyRef.innerHTML = 
@@ -392,19 +434,20 @@ class displayController{
     const playerStatusRefHTML =
     `
     <p class = "turn-status">
-      Turn: <span class = "${this.game.getActivePlayer().color}-player-status-text">${this.game.getActivePlayer().name}</span>
+      Turn: <span class = "${this.game.activePlayer.color}-player-status-text">${this.game.activePlayer.name}</span>
     </p>
     `;
     playerStatusRef.innerHTML = playerStatusRefHTML;
 
     // Change the board
-    const board = this.game.getBoard();
+    const board = this.game.board;
 
     // Clear the board
     boardRef.innerHTML = ``;
 
     let boardHTML = ``;
 
+    // Adding the grid and the cells for each of the 9 squares of the tic tac toe board
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
       for (let colIndex = 0; colIndex < 3; colIndex++){
         boardHTML +=
@@ -421,6 +464,7 @@ class displayController{
     }
     boardRef.innerHTML = boardHTML;
 
+    // Allows user to add an action to the board, redirecting to a function
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
       for (let colIndex = 0; colIndex < 3; colIndex++){
         this.addActionClick(rowIndex, colIndex, `button-${rowIndex}-${colIndex}`);
@@ -428,6 +472,7 @@ class displayController{
     }
   }
 
+  // Function communicates with backend when the user clicks the board through the adding of an event listener
   addActionClick(row, column, buttonId){
     const buttonRef = document.querySelector(`.${buttonId}`);
     buttonRef.addEventListener('click', () =>{
@@ -439,4 +484,5 @@ class displayController{
   };
 }
 
+// Starts the chain of userinput first
 new userInput();
