@@ -1,66 +1,53 @@
-/*CSS Reset: https://www.joshwcomeau.com/css/custom-css-reset/*/
-
-/* 1. Use a more-intuitive box-sizing model */
-*, *::before, *::after {
-  box-sizing: border-box;
+@font-face {
+  font-family: 'logo-font';
+  src: url(../../webfontkit-20250722-225433/norse-bold-webfont.woff2) format('woff2');
+  font-display: swap;
 }
 
-/* 2. Remove default margin */
-* {
-  margin: 0;
+button{
+  cursor: pointer;
 }
-
-/* 3. Enable keyword animations */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    interpolate-size: allow-keywords;
-  }
-}
-
-body {
-  /* 4. Add accessible line-height */
-  line-height: 1.5;
-  /* 5. Improve text rendering */
-  -webkit-font-smoothing: antialiased;
-}
-
-/* 6. Improve media defaults */
-img, picture, video, canvas, svg {
-  display: block;
-  max-width: 100%;
-}
-
-/* 7. Inherit fonts for form controls */
-input, button, textarea, select {
-  font: inherit;
-}
-
-/* 8. Avoid text overflows */
-p, h1, h2, h3, h4, h5, h6 {
-  overflow-wrap: break-word;
-}
-
-/* 9. Improve line wrapping */
-p {
-  text-wrap: pretty;
-}
-h1, h2, h3, h4, h5, h6 {
-  text-wrap: balance;
-}
-
-/*
-  10. Create a root stacking context
-*/
-#root, #__next {
-  isolation: isolate;
-}
-
-/*CSS Reset: https://www.joshwcomeau.com/css/custom-css-reset/*/
 
 /* makes boday span 100% of the screen, height and length wise*/
 html, body {
   margin: 0;
   height: 100%;
+}
+
+*{
+  font-family: Roboto;
+}
+
+.match-history-title-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(207, 207, 207, 0.65);
+}
+
+.match-history-title{
+  font-family: 'logo-font', Arial, Helvetica, sans-serif;
+  font-size: 80px;
+}
+
+.back-to-home-linker{
+  align-self: start;
+}
+
+.back-to-home{
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  border-radius: 10px;
+  border: none;
+
+  color: white;
+  background-color: #1DA1F2;
+  margin-left: 10px;
+  margin-top: 10px;
 }
 
 .container{
@@ -86,35 +73,40 @@ html, body {
   align-items: center;
 
   background-color: rgba(174, 174, 174, 0.65);
-  border: 1px solid black;
+  border-top: 1px solid black;
   width: 100%;
   gap: 20px;
-  cursor: pointer;
+
+  padding: 20px;
 }
 
-.match-grid{
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
+.game-info-review-button, .game-info-delete-button, .back{
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  border-radius: 10px;
+  border: none;
 }
 
-.cell > button{
-  width: 100px;
-  height: 100px;
-  font-size: 50px;
-  background: transparent;
+.game-info-review-button{
+  background-color: lightgreen;
 }
 
-.red{
-  color: red;
+.game-info-delete-button{
+  background-color: lightcoral;
 }
 
-.blue{
+.back{
+  background-color: #1DA1F2;
+  color: white;
+}
+
+.Blue-match-history{
   color: blue;
 }
 
-
-.buttons{
-  display: flex;
-  gap: 50px;
+.Red-match-history{
+  color: red;
 }

@@ -23,15 +23,16 @@ function renderMatchHistory(){
   containerRef.innerHTML = ``;
   containerRefInnerHTML = 
   `
-  <div>
-    <a href = "../index.html"><button class ="back-to-home">Back To Home</button></a>
+  <div class = "match-history-title-container">
+    <a href = "../index.html" class ="back-to-home-linker"><button class = "back-to-home">Back To Home</button></a>
+    <div class = "match-history-title">
+      Match History
+    </div>
   </div>
   `;
 
   const gameStorageRef = JSON.parse(localStorage.getItem('allGames')) || [];
   let gameNumber = 1;
-
-  console.log(gameStorageRef);
 
   for (const gameItem of gameStorageRef){
     const convertedGameItem = Game(gameItem[0], gameItem[1], gameItem[2], gameItem[3]);
@@ -43,21 +44,20 @@ function renderMatchHistory(){
       </div>
 
       <div>
-        Players:
         <div>
-          ${convertedGameItem.getplayerOneInfoName()} (${convertedGameItem.getplayerOneInfoColor()}) vs. ${convertedGameItem.getplayerTwoInfoName()} (${convertedGameItem.getplayerTwoInfoColor()})
+          <span class = "${convertedGameItem.getplayerOneInfoColor()}-match-history"> ${convertedGameItem.getplayerOneInfoName()} (${convertedGameItem.getplayerOneInfoColor()}) (${convertedGameItem.getplayerOneInfoSymbol()}) </span> vs. <span class = "${convertedGameItem.getplayerTwoInfoColor()}-match-history"> ${convertedGameItem.getplayerTwoInfoName()} (${convertedGameItem.getplayerTwoInfoColor()}) (${convertedGameItem.getplayerTwoInfoSymbol()}) </span>
         </div>
       </div>
 
       <div>
-        Result: ${convertedGameItem.getWinner() ? convertedGameItem.getWinner().name + ' won' : 'Stalemate.'}
+        Result: <span class = "${!convertedGameItem.getWinner() ? '' : (convertedGameItem.getWinner().name === convertedGameItem.getplayerOneInfoName() ? convertedGameItem.getplayerOneInfoColor() + "-match-history" : convertedGameItem.getplayerTwoInfoColor() + "-match-history")}"> ${convertedGameItem.getWinner() ? convertedGameItem.getWinner().name + ' won' : 'Stalemate.'} </span>
       </div>
 
       <div>
-        <button class = "game-info-review-button-${gameNumber}">
+        <button class = "game-info-review-button-${gameNumber} game-info-review-button">
           Review
         </button>
-        <button class = "game-info-delete-button-${gameNumber}">
+        <button class = "game-info-delete-button-${gameNumber} game-info-delete-button">
           Delete
         </button>
       </div>
@@ -107,21 +107,33 @@ function renderSingleMatch(gameNumber, moveNumber = 0){
       </button>
     </div>
 
+    <div class = "game-match-info">
+      <div>
+        <span class = "${gameRecord.getplayerOneInfoColor()}-match"> ${gameRecord.getplayerOneInfoName()} (${gameRecord.getplayerOneInfoColor()}) (${gameRecord.getplayerOneInfoSymbol()}) </span> vs. <span class = "${gameRecord.getplayerTwoInfoColor()}-match"> ${gameRecord.getplayerTwoInfoName()} (${gameRecord.getplayerTwoInfoColor()}) (${gameRecord.getplayerTwoInfoSymbol()}) </span>
+      </div>
+
+      <div>
+        <p>
+          Move #: ${moveNumber}
+        </p>
+      </div>
+    </div>
+
     <div class = "match-grid">
     </div>
 
     <div class = "buttons">
-      ${moveNumber < gameRecord.getBoardMoves().length - 1 ? `
-      <button class = "next">
-        Next
-      </button>  
-      ` : ``
-      }
-
       ${moveNumber > 0 ?`
         <button class = "previous">
           Previous
         </button> 
+      ` : ``
+      }
+
+      ${moveNumber < gameRecord.getBoardMoves().length - 1 ? `
+      <button class = "next">
+        Next
+      </button>  
       ` : ``
       }
     </div>
@@ -149,7 +161,10 @@ function renderSingleMatch(gameNumber, moveNumber = 0){
     })
   }
 
-  backButtonRef.addEventListener('click', () => renderMatchHistory());
+  backButtonRef.addEventListener('click', () => {
+    containerRef.classList.remove('game-container');
+    renderMatchHistory()
+  });
 
   matchGridRefInnerHTML = ``;
 

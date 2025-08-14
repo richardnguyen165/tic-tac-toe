@@ -1,41 +1,12 @@
-.container{
-  display: grid;
-  width: inherit;
-  height: inherit;
-
-  grid-template-rows: 1fr 9fr;
-  grid-template-columns: 1fr;
-}
-
-.tic-tac-toe-title-container{
-  display: grid;
-  grid-row: 1 / 2;
-}
-
-.tic-tac-toe-game-container{
-  display: grid;
-  grid-row: 2 / 3;
-}
-
-.tic-tac-toe-title{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tic-tac-toe-game{
+.game-container{
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   gap: 20px;
 }
 
-.board{
+.match-grid{
   display: grid;
-
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
 }
 
 .cell{
@@ -46,6 +17,7 @@
 .cell > button{
   width: inherit;
   height: inherit;
+  font-size: 50px;
   background: transparent;
 }
 
@@ -67,20 +39,35 @@
   border-bottom: none;
 }
 
-.red-cell, .blue-cell{
-  font-size: 50px;
-  text-align: center;
-}
-
-
-.red-cell, .Red-player-status-text{
+.red, .Red-match{
   color: red;
 }
 
-.blue-cell, .Blue-player-status-text{
+.blue, .Blue-match{
   color: blue;
 }
 
-.turn-status{
-  font-size: 25px;
+
+.buttons{
+  display: flex;
+  gap: 50px;
 }
+
+.previous, .next{
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  border-radius: 10px;
+  border: none;
+}
+
+.previous{
+  background-color: lightcoral;
+}
+
+.next{
+  background-color: lightgreen;
+}
+
