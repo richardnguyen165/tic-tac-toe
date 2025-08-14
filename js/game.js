@@ -85,12 +85,12 @@ class storeGame{
 class Board{
   rows = 3;
   columns = 3;
-  board;
-  moves;
+  _board;
+  _moves;
 
   constructor(){
-    this.board = [];
-    this.moves = [];
+    this._board = [];
+    this._moves = [];
     this.initializeBoard();
     this.cloneCurrentBoard();
   }
@@ -99,29 +99,29 @@ class Board{
 
   initializeBoard(){
     for (let rowIndex = 0; rowIndex < this.rows; rowIndex++){
-      this.board.push([]);
+      this._board.push([]);
       for (let colIndex = 0; colIndex < this.columns; colIndex++){
-        this.board[rowIndex].push(new Cell());
+        this._board[rowIndex].push(new Cell());
       }
     }
   }
 
   get board(){
-    return this.board;
+    return this._board;
   }
 
 
   get moves(){
-    return this.moves;
+    return this._moves;
   }
 
   changeCell(row, column, playerValue){
     // meaning the cell already has a x and o on it already
-    if (this.board[row][column].cellValue !== ''){
+    if (this._board[row][column].cellValue !== ''){
       return false;
     }
 
-    this.board[row][column].changeCellValue(playerValue);
+    this._board[row][column].changeCellValue(playerValue);
     this.cloneCurrentBoard();
     return true;
   };
@@ -132,22 +132,22 @@ class Board{
       currentMoveBoard.push([]);
       for (let colIndex = 0; colIndex < this.columns; colIndex++){
         const copyCell = new Cell();
-        const cellValue = this.board[rowIndex][colIndex];
+        const cellValue = this._board[rowIndex][colIndex];
         if (cellValue.cellValue){
           copyCell.changeCellValue(cellValue.cellValue);
         }
         currentMoveBoard[rowIndex].push(copyCell);
       }
     }
-    this.moves.push(currentMoveBoard);
+    this._moves.push(currentMoveBoard);
   };
 
   // for console testing
   printBoard(){
   let printString = '';
-    for (let rowIndex = 0; rowIndex < rows; rowIndex++){
-      for (let colIndex = 0; colIndex < columns; colIndex++){
-        printString += String(board[rowIndex][colIndex].cellValue);
+    for (let rowIndex = 0; rowIndex < this.rows; rowIndex++){
+      for (let colIndex = 0; colIndex < this.columns; colIndex++){
+        printString += String(this.board[rowIndex][colIndex].cellValue);
       }
       printString += '\n';
     }
@@ -156,39 +156,32 @@ class Board{
 }
 
 class Cell{
-  cellValue;
-  colorValue;
-  cellSymbol;
+  _cellValue;
+  _colorValue;
+  _cellSymbol;
 
   constructor(){
-    this.cellValue = '';
-    this.colorValue = '';
-    this.cellSymbol = '';
+    this._cellValue = '';
+    this._colorValue = '';
+    this._cellSymbol = '';
   }
 
   changeCellValue(playerValue){
-    this.cellValue = playerValue;
-    this.colorValue = playerValue === 1 ? "blue" : "red";
-    this.cellSymbol = playerValue === 1 ? "X" : "O";
+    this._cellValue = playerValue;
+    this._colorValue = playerValue === 1 ? "blue" : "red";
+    this._cellSymbol = playerValue === 1 ? "X" : "O";
   };
   
-  /*const getCellValue = () => cellValue;
-
-  const getColorValue = () => colorValue;
-
-  const getCellSymbol = () => cellSymbol;*/
-
-
   get cellValue(){
-    return this.cellValue;
+    return this._cellValue;
   };
 
   get colorValue(){
-    return this.colorValue;
+    return this._colorValue;
   }
 
   get cellSymbol(){
-    return this.cellSymbol;
+    return this._cellSymbol;
   }
 }
 
@@ -298,7 +291,7 @@ class gameController{
         const boardRef = document.querySelector('.board');
         boardRef.innerHTML = ``;
 
-        this.reset();
+        this.reset(this.activePlayer);
       }
       else if (fillCheck && !winCheck){
         const playerStatusRef = document.querySelector('.player-status');
@@ -314,7 +307,7 @@ class gameController{
         const boardRef = document.querySelector('.board');
         boardRef.innerHTML = ``;
 
-        this.reset();
+        this.reset(null);
       }
       else{
         this.swapActivePlayers();
@@ -324,7 +317,7 @@ class gameController{
 
   getBoard = () => this.board.board;
 
-  reset(){
+  reset(gameResult){
 
     const buttonAftermathRef = document.createElement('div');
     buttonAftermathRef.classList.add('button-aftermath');
@@ -352,7 +345,7 @@ class gameController{
       new userInput();
     });
 
-    new storeGame(this.playerDB.playerOne, this.playerDB.playerTwo, this.board.moves, this.gameResult);
+    new storeGame(this.playerDB.playerOne, this.playerDB.playerTwo, this.board.moves, gameResult);
   };
 }
 
