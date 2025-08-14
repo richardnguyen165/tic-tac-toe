@@ -111,7 +111,7 @@ class renderMatchHistory{
         elementToDelete.remove()
         gameStorageRef.splice(i - 1, 1);
         localStorage.setItem('allGames', JSON.stringify(gameStorageRef));
-        renderMatchHistory();
+        new renderMatchHistory();
       });
     }
 

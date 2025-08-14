@@ -10,15 +10,7 @@ class userInput{
     const playButtonRef = document.querySelector('.user-play');
 
     playButtonRef.addEventListener('click', () => {
-      if (!playerOneInputRef.value){
-        alert('Enter Player One Name!');
-      }
-      else if (!playerTwoInputRef.value){
-        alert('Enter Player Two Name!');
-      }
-      else{
-        displayController(playerOneInputRef.value, playerTwoInputRef.value);
-      }
+      new displayController(playerOneInputRef.value, playerTwoInputRef.value);
     });
   }
 
@@ -48,32 +40,46 @@ class userInput{
   }
 }
 
-function storeGame(playerOneInfo, playerTwoInfo, boardMoves, winner){
-  // localStorage destroys closures within objects
-  const localStorageRef = JSON.parse(localStorage.getItem('allGames')) || [];
-  let newBoard = [];
+class storeGame{
 
-  console.log(boardMoves);
+  playerOneInfo;
+  playerTwoInfo;
+  boardMoves;
+  winner;
 
-  for (let boardMoveNumber = 0; boardMoveNumber < boardMoves.length; boardMoveNumber++){
-    let newGame = []
-    let currentMove = boardMoves[boardMoveNumber];
-    for (let rowIndex = 0; rowIndex < 3; rowIndex++){
-      let newRow = []
-      for (let colIndex = 0; colIndex < 3; colIndex++){
-        newRow.push({
-          cellValue: currentMove[rowIndex][colIndex].getCellValue(),
-          colorValue: currentMove[rowIndex][colIndex].getColorValue(),
-          cellSymbol: currentMove[rowIndex][colIndex].getCellSymbol(),
-        })
-      }
-      newGame.push(newRow);
-    }
-    newBoard.push(newGame);
+  constructor(playerOneInfo, playerTwoInfo, boardMoves, winner){
+    this.playerOneInfo = playerOneInfo;
+    this.playerTwoInfo = playerTwoInfo;
+    this.boardMoves = boardMoves;
+    this.winner = winner;
+    this.store();
   }
 
-  localStorageRef.push([playerOneInfo, playerTwoInfo, newBoard, winner]);
-  localStorage.setItem('allGames', JSON.stringify(localStorageRef));
+  store(){
+    // localStorage destroys closures within objects
+    const localStorageRef = JSON.parse(localStorage.getItem('allGames')) || [];
+    let newBoard = [];
+
+    for (let boardMoveNumber = 0; boardMoveNumber < this.boardMoves.length; boardMoveNumber++){
+      let newGame = []
+      let currentMove = this.boardMoves[boardMoveNumber];
+      for (let rowIndex = 0; rowIndex < 3; rowIndex++){
+        let newRow = []
+        for (let colIndex = 0; colIndex < 3; colIndex++){
+          newRow.push({
+            cellValue: currentMove[rowIndex][colIndex].getCellValue(),
+            colorValue: currentMove[rowIndex][colIndex].getColorValue(),
+            cellSymbol: currentMove[rowIndex][colIndex].getCellSymbol(),
+          })
+        }
+        newGame.push(newRow);
+      }
+      newBoard.push(newGame);
+    }
+
+    localStorageRef.push([this.playerOneInfo, this.playerTwoInfo, newBoard, this.winner]);
+    localStorage.setItem('allGames', JSON.stringify(localStorageRef));
+  }
 }
 
 function Board(){
@@ -159,39 +165,48 @@ function Cell(){
 }
 
 // default parameters for naming
-function gameController(playerOneName, playerTwoName) {
+class gameController{
 
-  const playerDB = {
-    playerOne : {
-      name: playerOneName,
-      value: 1,
-      symbol: "X",
-      color: "Blue"
-    },
-    playerTwo : {
-      name: playerTwoName,
-      value : 2,
-      symbol: "O",
-      color: "Red"
+  playerOneName;
+  playerTwoName;
+  activePlayer;
+  board;
+  playerDB;
+
+  constructor(playerOneName, playerTwoName){
+    this.playerOneName = playerOneName;
+    this.playerTwoName = playerTwoName;
+    this.board = Board();
+    this.playerDB = {
+      playerOne : {
+        name: playerOneName,
+        value: 1,
+        symbol: "X",
+        color: "Blue"
+      },
+      playerTwo : {
+        name: playerTwoName,
+        value : 2,
+        symbol: "O",
+        color: "Red"
+      }
     }
+    this.activePlayer = this.playerDB.playerOne;
   }
 
-  const board = Board();
-  let activePlayer = playerDB.playerOne;
-
-  const checkArrayForOneValue = (check) => {
+  checkArrayForOneValue(check){
     let firstValue = check[0].getCellValue();
     let testArray = check.filter(cellMate => cellMate.getCellValue() === firstValue);
     // because, all 3 values would be the same to each other 
     return testArray.length === 3 && firstValue !== '';
   };
 
-  const checkForWins = () => {
-    const boardReplica = board.getBoard();
+  checkForWins(){
+    const boardReplica = this.board.getBoard();
 
     // Check for row wins
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
-      let winValue = checkArrayForOneValue(boardReplica[rowIndex]);
+      let winValue = this.checkArrayForOneValue(boardReplica[rowIndex]);
       if (winValue){
         // we dont need to return the winning player, the ones that active IS the winning player
         return true;
@@ -204,7 +219,7 @@ function gameController(playerOneName, playerTwoName) {
       for (let rowIndex = 0; rowIndex < 3; rowIndex++){
         newCol.push(boardReplica[rowIndex][colIndex]);
       }
-      let winValue = checkArrayForOneValue(newCol);
+      let winValue = this.checkArrayForOneValue(newCol);
       if (winValue){
         return true;
       }
@@ -212,11 +227,11 @@ function gameController(playerOneName, playerTwoName) {
 
 
     // Check for diag or return false -> if either of them fail, return false, as we checked all possible ways to win
-    return checkArrayForOneValue([boardReplica[0][0], boardReplica[1][1], boardReplica[2][2]]) || checkArrayForOneValue([boardReplica[0][2], boardReplica[1][1], boardReplica[2][0]]);
+    return this.checkArrayForOneValue([boardReplica[0][0], boardReplica[1][1], boardReplica[2][2]]) || this.checkArrayForOneValue([boardReplica[0][2], boardReplica[1][1], boardReplica[2][0]]);
   };
 
-  const checkIfFilled = () => {
-    const boardReplica = board.getBoard();
+  checkIfFilled(){
+    const boardReplica = this.board.getBoard();
 
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
       for (let colIndex = 0; colIndex < 3; colIndex++){
@@ -228,24 +243,26 @@ function gameController(playerOneName, playerTwoName) {
     return true;
   }
 
-  const swapActivePlayers = () => {
-    activePlayer = activePlayer === playerDB.playerOne ? playerDB.playerTwo : playerDB.playerOne;
+  swapActivePlayers = () => {
+    this.activePlayer = this.activePlayer === this.playerDB.playerOne ? this.playerDB.playerTwo : this.playerDB.playerOne;
   }
 
-  const getActivePlayer = () => activePlayer;
+  getActivePlayer = () => this.activePlayer;
 
   // The board will have an eventlistener for each button, allowing it to pass row and col params
-  const actionOnBoard = (row, column) => {
+  actionOnBoard(row, column){
     // Prevents user from pressing after wins
-    let validMove = board.changeCell(row, column, activePlayer.value);
+    let validMove = this.board.changeCell(row, column, this.activePlayer.value);
     if (validMove){
-      if (checkForWins()){
+      const winCheck = this.checkForWins();
+      const fillCheck = this.checkIfFilled();
+      if (winCheck){
         const playerStatusRef = document.querySelector('.player-status');
         playerStatusRef.innerHTML = ``;
         const playerStatusRefHTML =
         `
-        <p class = "${activePlayer.color}-player-status-text result-text">
-        ${activePlayer.name} (${activePlayer.color}) won! 
+        <p class = "${this.activePlayer.color}-player-status-text result-text">
+        ${this.activePlayer.name} (${this.activePlayer.color}) won! 
         </p>
         `;
         playerStatusRef.innerHTML = playerStatusRefHTML;
@@ -253,9 +270,9 @@ function gameController(playerOneName, playerTwoName) {
         const boardRef = document.querySelector('.board');
         boardRef.innerHTML = ``;
 
-        reset(activePlayer);
+        this.reset();
       }
-      else if (checkIfFilled() && !checkForWins()){
+      else if (fillCheck && !winCheck){
         const playerStatusRef = document.querySelector('.player-status');
         playerStatusRef.innerHTML = ``;
         const playerStatusRefHTML =
@@ -269,17 +286,17 @@ function gameController(playerOneName, playerTwoName) {
         const boardRef = document.querySelector('.board');
         boardRef.innerHTML = ``;
 
-        reset(null);
+        this.reset();
       }
       else{
-        swapActivePlayers();
+        this.swapActivePlayers();
       }
     }
   };
 
-  const getBoard = () => board.getBoard();
+  getBoard = () => this.board.getBoard();
 
-  const reset = (gameResult) => {
+  reset(){
 
     const buttonAftermathRef = document.createElement('div');
     buttonAftermathRef.classList.add('button-aftermath');
@@ -307,18 +324,46 @@ function gameController(playerOneName, playerTwoName) {
       new userInput();
     });
 
-    storeGame(playerDB.playerOne, playerDB.playerTwo, board.getMoves(), gameResult);
+    new storeGame(this.playerDB.playerOne, this.playerDB.playerTwo, this.board.getMoves(), this.gameResult);
   };
-
-  return {actionOnBoard, getActivePlayer, getBoard, checkForWins, checkIfFilled};
 }
 
-function displayController(playerOneName = "Player One", playerTwoName = "Player Two"){
-  //html linkers
+class displayController{
 
-  const game = gameController(playerOneName, playerTwoName);
+  playerOneName;
+  playerTwoName;
+  game;
 
-  const renderBoard = () => {
+  constructor(playerOneName = "Player One", playerTwoName = "Player Two"){
+    this.playerOneName = playerOneName;
+    this.playerTwoName = playerTwoName;
+    this.game = new gameController(playerOneName, playerTwoName);
+    this.renderBody();
+    this.renderBoard();
+  }
+
+  renderBody(){
+    const bodyRef = document.querySelector('body');
+    bodyRef.innerHTML = 
+    `
+    <div class = "container">
+      <div class = "tic-tac-toe-title-container">
+        <div class = "tic-tac-toe-title">
+          Tic-Tac-Toe
+        </div>
+      </div>
+
+      <div class = "tic-tac-toe-game-container">
+        <div class = "tic-tac-toe-game">
+          <div class = "player-status"></div>
+          <div class = "board"></div>
+        </div>
+      </div>
+    </div>
+    `
+  }
+
+  renderBoard(){
     const playerStatusRef = document.querySelector('.player-status');
     const boardRef = document.querySelector('.board');
 
@@ -326,13 +371,13 @@ function displayController(playerOneName = "Player One", playerTwoName = "Player
     const playerStatusRefHTML =
     `
     <p class = "turn-status">
-      Turn: <span class = "${game.getActivePlayer().color}-player-status-text">${game.getActivePlayer().name}</span>
+      Turn: <span class = "${this.game.getActivePlayer().color}-player-status-text">${this.game.getActivePlayer().name}</span>
     </p>
     `;
     playerStatusRef.innerHTML = playerStatusRefHTML;
 
     // Change the board
-    const board = game.getBoard();
+    const board = this.game.getBoard();
 
     // Clear the board
     boardRef.innerHTML = ``;
@@ -357,40 +402,20 @@ function displayController(playerOneName = "Player One", playerTwoName = "Player
 
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
       for (let colIndex = 0; colIndex < 3; colIndex++){
-        addActionClick(rowIndex, colIndex, `button-${rowIndex}-${colIndex}`);
+        this.addActionClick(rowIndex, colIndex, `button-${rowIndex}-${colIndex}`);
       }
     }
   }
 
-  const addActionClick = (row, column, buttonId) => {
+  addActionClick(row, column, buttonId){
     const buttonRef = document.querySelector(`.${buttonId}`);
     buttonRef.addEventListener('click', () =>{
-      game.actionOnBoard(row, column);
-      if (!game.checkForWins() && !(game.checkIfFilled() && !game.checkForWins())){
-        renderBoard();
+      this.game.actionOnBoard(row, column);
+      if (!this.game.checkForWins() && !(this.game.checkIfFilled() && !this.game.checkForWins())){
+        this.renderBoard();
       }
     });
   };
-
-  const bodyRef = document.querySelector('body');
-  bodyRef.innerHTML = 
-  `
-  <div class = "container">
-    <div class = "tic-tac-toe-title-container">
-      <div class = "tic-tac-toe-title">
-        Tic-Tac-Toe
-      </div>
-    </div>
-
-    <div class = "tic-tac-toe-game-container">
-      <div class = "tic-tac-toe-game">
-        <div class = "player-status"></div>
-        <div class = "board"></div>
-      </div>
-    </div>
-  </div>
-  `
-  renderBoard();
 }
 
 new userInput();
