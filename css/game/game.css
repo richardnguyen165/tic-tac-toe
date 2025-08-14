@@ -1,3 +1,11 @@
+/*This is for the game grid*/
+
+.tic-tac-toe-title, .tic-tac-toe-game{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .container{
   display: grid;
   width: inherit;
@@ -17,17 +25,8 @@
   grid-row: 2 / 3;
 }
 
-.tic-tac-toe-title{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .tic-tac-toe-game{
-  display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   gap: 20px;
 }
 

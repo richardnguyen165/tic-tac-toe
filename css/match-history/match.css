@@ -1,3 +1,4 @@
+/* GAME CONTAINER */
 .game-container{
   display: flex;
   flex-direction: column;
@@ -21,6 +22,7 @@
   background: transparent;
 }
 
+/* Responsible for making the grid look like a tic-tac-toe grid*/
 .cell:nth-child(3n) > button, .cell:nth-child(3n + 1) > button{
   border-right: none;
   border-left: none;
@@ -38,7 +40,9 @@
 .cell:nth-child(7) > button, .cell:nth-child(8) > button, .cell:nth-child(9) > button{
   border-bottom: none;
 }
+/* Responsible for making the grid look like a tic-tac-toe grid*/
 
+/* Responsible for changing color of X and O, and the information text */
 .red, .Red-match{
   color: red;
 }
@@ -52,6 +56,10 @@
   display: flex;
   gap: 50px;
 }
+
+/* Responsible for changing color of X and O, and the information text */
+
+/* Responsible for styling the previous, next and back buttons buttons*/
 
 .previous, .next{
   padding-right: 10px;
@@ -71,3 +79,11 @@
   background-color: lightgreen;
 }
 
+.back{
+  background-color: #1DA1F2;
+  color: white;
+}
+
+/* Responsible for styling the previous, next and back buttons*/
+
+/* GAME CONTAINER */

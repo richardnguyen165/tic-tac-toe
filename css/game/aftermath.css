@@ -1,3 +1,5 @@
+/* Responsible for styling the game aftermath (when game is won or stalemated) */
+
 .button-aftermath{
   display: flex;
   gap: 20px;

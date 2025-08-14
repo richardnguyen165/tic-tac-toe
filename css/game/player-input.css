@@ -1,12 +1,4 @@
-/* makes boday span 100% of the screen, height and length wise*/
-html, body {
-  margin: 0;
-  height: 100%;
-}
-
-*{
-  font-family: 'Roboto', Arial, Helvetica, sans-serif;
-}
+/* This is to style the screen consisting of the player 1 and player 2 inputs for names*/
 
 .user-container{
   width: inherit;
@@ -31,11 +23,6 @@ html, body {
   gap: 10px;
 }
 
-.user-input-buttons{
-  display: flex;
-  gap: 20px;
-}
-
 input{
   border: 1px grey solid;
   border-radius: 10px;
@@ -43,10 +30,7 @@ input{
   padding: 7px;
 }
 
-button{
-  cursor: pointer;
-}
-
+/* used to indicate the color of each symbol */
 .red-input{
   color: red;
 }
@@ -54,6 +38,15 @@ button{
 
 .blue-input{
   color: blue;
+}
+
+/* used to indicate the color of each symbol */
+
+/* used to style the buttons */
+
+.user-input-buttons{
+  display: flex;
+  gap: 20px;
 }
 
 .user-input-buttons > button, .user-back-to-home{
@@ -75,4 +68,5 @@ button{
   transition: box-shadow 0.5s;
 }
 
+/* used to style the buttons */
 
