@@ -48,6 +48,8 @@
   background: transparent;
 }
 
+/* Helps control border so that a tic tac toe grid can be formed */
+
 .cell:nth-child(3n) > button, .cell:nth-child(3n + 1) > button{
   border-right: none;
   border-left: none;
@@ -65,6 +67,8 @@
 .cell:nth-child(7) > button, .cell:nth-child(8) > button, .cell:nth-child(9) > button{
   border-bottom: none;
 }
+
+/* Helps control border so that a tic tac toe grid can be formed */
 
 .red-cell, .blue-cell{
   font-size: 50px;
