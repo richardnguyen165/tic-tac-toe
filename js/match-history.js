@@ -1,3 +1,6 @@
+/*JS File for Match History Catalogue*/
+
+// Game class -> helps process compelted games from previous matches
 class Game{
 
   playerTwoInfo;
@@ -5,6 +8,7 @@ class Game{
   boardMoves;
   winner;
 
+  // gets player one info, player two info, board moves and the winner
   constructor(playerOneInfo, playerTwoInfo, boardMoves, winner){
     this.playerOneInfo = playerOneInfo;
     this.playerTwoInfo = playerTwoInfo;
@@ -49,10 +53,13 @@ class Game{
 
 class renderMatchHistory{
   constructor(){
+    // runs the match history display function
     this.displayMatchHistory();
   }
 
   displayMatchHistory(){
+
+    // code creates the container and creates the top header, consisting of titile and back to home button
     let containerRef = document.querySelector('.container');
     containerRef.classList.add('match-history-container');
 
@@ -70,6 +77,7 @@ class renderMatchHistory{
     const gameStorageRef = JSON.parse(localStorage.getItem('allGames')) || [];
     let gameNumber = 1;
 
+    // iterates through all game matches, allowing them to present each game on each row indiv.
     for (const gameItem of gameStorageRef){
       const convertedGameItem = new Game(gameItem[0], gameItem[1], gameItem[2], gameItem[3]);
       containerRefInnerHTML += 
@@ -102,8 +110,10 @@ class renderMatchHistory{
       gameNumber += 1;
     };
 
+    // inserts HTML into page, displaying it 
     containerRef.innerHTML = containerRefInnerHTML;
 
+    // deletes a game, and re renders page to ensure that the count is accurate
     for (let i = 1; i <= gameStorageRef.length; i++){
       const deleteButtonRef = document.querySelector(`.game-info-delete-button-${i}`);
       const elementToDelete = document.querySelector(`.game-info-${i}`);
@@ -115,7 +125,7 @@ class renderMatchHistory{
       });
     }
 
-
+    // review buttons redirect to the rendersingleMatch() where one match will be shown
     for (let i = 1; i <= gameStorageRef.length; i++){
       const reviewButtonRef = document.querySelector(`.game-info-review-button-${i}`);
       reviewButtonRef.addEventListener('click', () => {
@@ -125,6 +135,7 @@ class renderMatchHistory{
   }
 }
 
+// responsible for rendering a single match, helping it show previous and next moves, providing better game analysis
 class renderSingleMatch{
 
   gameNumber;
@@ -147,6 +158,7 @@ class renderSingleMatch{
 
     containerRef.innerHTML = ``;
 
+    // Generates html for tic tac toe match display
     containerRef.innerHTML = 
     `
       <div>
@@ -193,6 +205,7 @@ class renderSingleMatch{
     const previousButtonRef = document.querySelector('.previous');
     const backButtonRef = document.querySelector('.back');
 
+    // allows user to see the next move in the tic tac toe match
     if (this.moveNumber < gameRecord.boardMoves.length - 1){
       nextButtonRef.addEventListener('click', () => {
         if (this.moveNumber < gameRecord.boardMoves.length){
@@ -201,6 +214,7 @@ class renderSingleMatch{
       })
     }
 
+    // allows user to see the previous move in the tic tac toe match
     if (this.moveNumber > 0){
         previousButtonRef.addEventListener('click', () => {
         if (this.moveNumber > 0){
@@ -209,11 +223,13 @@ class renderSingleMatch{
       })
     }
 
+    // goes back to match history catalogue
     backButtonRef.addEventListener('click', () => {
       containerRef.classList.remove('game-container');
       new renderMatchHistory();
     });
 
+    // code is reposnible for generating the tic tac toe grid
     let matchGridRefInnerHTML = ``;
 
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
@@ -235,4 +251,5 @@ class renderSingleMatch{
   }
 }
 
+// Helps render the match history catalogue
 const renderMatchInstance = new renderMatchHistory();
