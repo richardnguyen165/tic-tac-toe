@@ -8,12 +8,6 @@ button{
   cursor: pointer;
 }
 
-/* makes boday span 100% of the screen, height and length wise*/
-html, body {
-  margin: 0;
-  height: 100%;
-}
-
 *{
   font-family: Roboto;
 }

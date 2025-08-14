@@ -56,3 +56,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /*CSS Reset: https://www.joshwcomeau.com/css/custom-css-reset/*/
+
+/* makes body span 100% of the screen, height and length wise*/
+html, body {
+  margin: 0;
+  height: 100%;
+}
