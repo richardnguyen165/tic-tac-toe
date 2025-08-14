@@ -67,9 +67,9 @@ class storeGame{
         let newRow = []
         for (let colIndex = 0; colIndex < 3; colIndex++){
           newRow.push({
-            cellValue: currentMove[rowIndex][colIndex].getCellValue(),
-            colorValue: currentMove[rowIndex][colIndex].getColorValue(),
-            cellSymbol: currentMove[rowIndex][colIndex].getCellSymbol(),
+            cellValue: currentMove[rowIndex][colIndex].cellValue,
+            colorValue: currentMove[rowIndex][colIndex].colorValue,
+            cellSymbol: currentMove[rowIndex][colIndex].cellSymbol,
           })
         }
         newGame.push(newRow);
@@ -101,7 +101,7 @@ class Board{
     for (let rowIndex = 0; rowIndex < this.rows; rowIndex++){
       this.board.push([]);
       for (let colIndex = 0; colIndex < this.columns; colIndex++){
-        this.board[rowIndex].push(Cell());
+        this.board[rowIndex].push(new Cell());
       }
     }
   }
@@ -117,7 +117,7 @@ class Board{
 
   changeCell(row, column, playerValue){
     // meaning the cell already has a x and o on it already
-    if (this.board[row][column].getCellValue() !== ''){
+    if (this.board[row][column].cellValue !== ''){
       return false;
     }
 
@@ -131,10 +131,10 @@ class Board{
     for (let rowIndex = 0; rowIndex < this.rows; rowIndex++){
       currentMoveBoard.push([]);
       for (let colIndex = 0; colIndex < this.columns; colIndex++){
-        const copyCell = Cell();
+        const copyCell = new Cell();
         const cellValue = this.board[rowIndex][colIndex];
-        if (cellValue.getCellValue()){
-          copyCell.changeCellValue(cellValue.getCellValue());
+        if (cellValue.cellValue){
+          copyCell.changeCellValue(cellValue.cellValue);
         }
         currentMoveBoard[rowIndex].push(copyCell);
       }
@@ -147,7 +147,7 @@ class Board{
   let printString = '';
     for (let rowIndex = 0; rowIndex < rows; rowIndex++){
       for (let colIndex = 0; colIndex < columns; colIndex++){
-        printString += String(board[rowIndex][colIndex].getCellValue());
+        printString += String(board[rowIndex][colIndex].cellValue);
       }
       printString += '\n';
     }
@@ -155,24 +155,41 @@ class Board{
   };
 }
 
-function Cell(){
-  let cellValue = '';
-  let colorValue = '';
-  let cellSymbol = '';
+class Cell{
+  cellValue;
+  colorValue;
+  cellSymbol;
 
-  const changeCellValue = (playerValue) => {
-    cellValue = playerValue;
-    colorValue = playerValue === 1 ? "blue" : "red";
-    cellSymbol = playerValue === 1 ? "X" : "O";
+  constructor(){
+    this.cellValue = '';
+    this.colorValue = '';
+    this.cellSymbol = '';
+  }
+
+  changeCellValue(playerValue){
+    this.cellValue = playerValue;
+    this.colorValue = playerValue === 1 ? "blue" : "red";
+    this.cellSymbol = playerValue === 1 ? "X" : "O";
   };
   
-  const getCellValue = () => cellValue;
+  /*const getCellValue = () => cellValue;
 
   const getColorValue = () => colorValue;
 
-  const getCellSymbol = () => cellSymbol;
+  const getCellSymbol = () => cellSymbol;*/
 
-  return {changeCellValue, getCellValue, getColorValue, getCellSymbol};
+
+  get cellValue(){
+    return this.cellValue;
+  };
+
+  get colorValue(){
+    return this.colorValue;
+  }
+
+  get cellSymbol(){
+    return this.cellSymbol;
+  }
 }
 
 // default parameters for naming
@@ -206,8 +223,8 @@ class gameController{
   }
 
   checkArrayForOneValue(check){
-    let firstValue = check[0].getCellValue();
-    let testArray = check.filter(cellMate => cellMate.getCellValue() === firstValue);
+    let firstValue = check[0].cellValue;
+    let testArray = check.filter(cellMate => cellMate.cellValue === firstValue);
     // because, all 3 values would be the same to each other 
     return testArray.length === 3 && firstValue !== '';
   };
@@ -246,7 +263,7 @@ class gameController{
 
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
       for (let colIndex = 0; colIndex < 3; colIndex++){
-        if (boardReplica[rowIndex][colIndex].getCellValue() === ''){
+        if (boardReplica[rowIndex][colIndex].cellValue === ''){
           return false;
         }
       }
@@ -401,8 +418,8 @@ class displayController{
         `
         <div class = "cell">
           <button class = "button-${rowIndex}-${colIndex}">
-            <p class = "${board[rowIndex][colIndex].getColorValue()}-cell">
-              ${board[rowIndex][colIndex].getCellSymbol()}
+            <p class = "${board[rowIndex][colIndex].colorValue}-cell">
+              ${board[rowIndex][colIndex].cellSymbol}
             </p>
           </button>
         </div>
