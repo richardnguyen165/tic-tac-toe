@@ -82,53 +82,68 @@ class storeGame{
   }
 }
 
-function Board(){
-  const rows = 3, columns = 3;
+class Board{
+  rows = 3;
+  columns = 3;
+  board;
+  moves;
 
-  const board = [];
-  const moves = [];
+  constructor(){
+    this.board = [];
+    this.moves = [];
+    this.initializeBoard();
+    this.cloneCurrentBoard();
+  }
 
   // Initializing the board
 
-  for (let rowIndex = 0; rowIndex < rows; rowIndex++){
-    board.push([]);
-    for (let colIndex = 0; colIndex < columns; colIndex++){
-      board[rowIndex].push(Cell());
+  initializeBoard(){
+    for (let rowIndex = 0; rowIndex < this.rows; rowIndex++){
+      this.board.push([]);
+      for (let colIndex = 0; colIndex < this.columns; colIndex++){
+        this.board[rowIndex].push(Cell());
+      }
     }
   }
 
-  const getBoard = () => board;
-  const getMoves = () => moves;
+  get board(){
+    return this.board;
+  }
 
-  const changeCell = (row, column, playerValue) => {
+
+  get moves(){
+    return this.moves;
+  }
+
+  changeCell(row, column, playerValue){
     // meaning the cell already has a x and o on it already
-    if (board[row][column].getCellValue() !== ''){
+    if (this.board[row][column].getCellValue() !== ''){
       return false;
     }
 
-    board[row][column].changeCellValue(playerValue);
-    cloneCurrentBoard();
+    this.board[row][column].changeCellValue(playerValue);
+    this.cloneCurrentBoard();
     return true;
   };
 
-  const cloneCurrentBoard = () => {
+  cloneCurrentBoard(){
     const currentMoveBoard = []
-    for (let rowIndex = 0; rowIndex < rows; rowIndex++){
+    for (let rowIndex = 0; rowIndex < this.rows; rowIndex++){
       currentMoveBoard.push([]);
-      for (let colIndex = 0; colIndex < columns; colIndex++){
+      for (let colIndex = 0; colIndex < this.columns; colIndex++){
         const copyCell = Cell();
-        const cellValue = board[rowIndex][colIndex];
+        const cellValue = this.board[rowIndex][colIndex];
         if (cellValue.getCellValue()){
           copyCell.changeCellValue(cellValue.getCellValue());
         }
         currentMoveBoard[rowIndex].push(copyCell);
       }
     }
-    moves.push(currentMoveBoard);
+    this.moves.push(currentMoveBoard);
   };
 
   // for console testing
-  const printBoard = () => {
+  printBoard(){
   let printString = '';
     for (let rowIndex = 0; rowIndex < rows; rowIndex++){
       for (let colIndex = 0; colIndex < columns; colIndex++){
@@ -138,10 +153,6 @@ function Board(){
     }
     console.log(printString);
   };
-
-  cloneCurrentBoard();
-
-  return {getBoard, changeCell, printBoard, getMoves}
 }
 
 function Cell(){
@@ -176,7 +187,7 @@ class gameController{
   constructor(playerOneName, playerTwoName){
     this.playerOneName = playerOneName;
     this.playerTwoName = playerTwoName;
-    this.board = Board();
+    this.board = new Board();
     this.playerDB = {
       playerOne : {
         name: playerOneName,
@@ -202,7 +213,7 @@ class gameController{
   };
 
   checkForWins(){
-    const boardReplica = this.board.getBoard();
+    const boardReplica = this.getBoard();
 
     // Check for row wins
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
@@ -231,7 +242,7 @@ class gameController{
   };
 
   checkIfFilled(){
-    const boardReplica = this.board.getBoard();
+    const boardReplica = this.getBoard();
 
     for (let rowIndex = 0; rowIndex < 3; rowIndex++){
       for (let colIndex = 0; colIndex < 3; colIndex++){
@@ -294,7 +305,7 @@ class gameController{
     }
   };
 
-  getBoard = () => this.board.getBoard();
+  getBoard = () => this.board.board;
 
   reset(){
 
@@ -324,7 +335,7 @@ class gameController{
       new userInput();
     });
 
-    new storeGame(this.playerDB.playerOne, this.playerDB.playerTwo, this.board.getMoves(), this.gameResult);
+    new storeGame(this.playerDB.playerOne, this.playerDB.playerTwo, this.board.moves, this.gameResult);
   };
 }
 
